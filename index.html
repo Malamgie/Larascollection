@@ -26,12 +26,20 @@
         .product-card {
             scroll-snap-align: start;
         }
+        @font-face {
+  font-family: 'Megaline';
+  src: url('fonts/Megaline.ttf') format('truetype');
+}
+
+.brand-name {
+  font-family: 'Megaline', serif;
+}
     </style>
 </head>
 <body class="text-gray-800">
 
 <header class="container mx-auto px-4 py-4 flex justify-between items-center">
-    <div class="text-2xl font-bold tracking-widest text-black">LAZA</div>
+    <div class="text-2xl font-bold tracking-widest text-black"><span class="brand-name" >Lara's collection</span></div>
     <nav class="hidden md:flex space-x-8 text-sm font-medium uppercase tracking-wider">
         <a href="#shop" class="hover:text-pink-600">Shop</a>
         <a href="#about" class="hover:text-pink-600">About</a>
@@ -218,16 +226,16 @@
         <div>
             <h4 class="text-lg font-semibold text-white mb-4 uppercase">Get In Touch</h4>
             <ul class="space-y-2 text-sm">
-                <li>Email: <a href="mailto:support@laza.com" class="hover:text-white">support@laza.com</a></li>
-                <li>Phone: <a href="tel:+1234567890" class="hover:text-white">+1 (234) 567-890</a></li>
-                <li>WhatsApp: <a href="https://wa.me/1234567890" target="_blank" class="hover:text-white">Chat Now</a></li>
+                <li>Email: <a href="mailto:support@laza.com" class="hover:text-white">laracollection@gmail.com</a></li>
+                <li>Phone: <a href="tel:+2348037526978" class="hover:text-white">+234 (8037) 52 6978</a></li>
+                <li>WhatsApp: <a href="https://wa.me/2348037526978" target="_blank" class="hover:text-white">Chat Now</a></li>
             </ul>
         </div>
 
         <div>
             <h4 class="text-lg font-semibold text-white mb-4 uppercase">Headquarters</h4>
             <address class="text-sm not-italic space-y-2">
-                <p>LAZA Global Cosmetics</p>
+                <p><span class="brand-name" >Lara</span>Global Cosmetics</p>
                 <p>101 Beauty Ave, Suite 500</p>
                 <p>Glamour City, GC 90210</p>
                 <p>United States</p>
