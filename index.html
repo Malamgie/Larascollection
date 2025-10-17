@@ -2,30 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="description" content="Explore elegant Abayas, vibrant Ankara, and luxury beauty items from Lara's Collection. Discover timeless African-inspired fashion.">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lara's Collection | Elegant Ankara, Abayas, and Luxury Beauty</title>
+    <title>Lara's Collection | women's everything</title>
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Load Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
     <style>
-        /* Custom Tailwind Configuration - NEW PALETTE */
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'primary-light': '#FFFCFC',  /* Near White */
-                        'accent-soft': '#BCABB0',    /* Soft Mauve/Pink */
-                        'accent-medium': '#785964',  /* Medium Plum */
-                        'primary-dark': '#5D3543',   /* Deep Burgundy/Plum */
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                }
-            }
-        }
+        
 
         /* Standard animation styles (Sidebar, Dropdowns) */
         .desktop-shop-menu { transition: opacity 0.3s ease, visibility 0.3s ease; opacity: 0; visibility: hidden; pointer-events: none; }
@@ -60,8 +46,29 @@
             color: #785964; /* Highlight color when updated */
         }
     </style>
+    <script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          'primary-light': '#FFFCFC',
+          'accent-soft': '#BCABB0',
+          'accent-medium': '#785964',
+          'primary-dark': '#5D3543',
+        },
+        fontFamily: {
+          sans: ['Inter', 'sans-serif'],
+        },
+      },
+    },
+  }
+       
+  lucide.createIcons();
+    
+    </script>
+    
 </head>
-<body class="font-sans bg-primary-light text-primary-dark antialiased">
+<body class="scroll-smooth container mx-auto font-sans bg-primary-light text-primary-dark antialiased">
 
     <!-- 
         ========================================
