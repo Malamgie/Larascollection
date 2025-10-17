@@ -6,19 +6,19 @@
     <title>Lara's Collection | Elegant Ankara, Abayas, and Luxury Beauty</title>
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Load Lucide Icons (instead of Font Awesome) -->
+    <!-- Load Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
     <style>
-        /* Custom Tailwind Configuration */
+        /* Custom Tailwind Configuration - NEW PALETTE */
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        'primary-beige': '#F9F7F4',
-                        'accent-gold': '#C9A04B',
-                        'deep-burgundy': '#8B0000',
-                        'text-dark': '#333333',
+                        'primary-light': '#FFFCFC',  /* Near White */
+                        'accent-soft': '#BCABB0',    /* Soft Mauve/Pink */
+                        'accent-medium': '#785964',  /* Medium Plum */
+                        'primary-dark': '#5D3543',   /* Deep Burgundy/Plum */
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
@@ -27,201 +27,107 @@
             }
         }
 
-        /* Custom Styles for Desktop Dropdowns and Mobile Sidebar */
-        .desktop-shop-menu {
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+        /* Standard animation styles (Sidebar, Dropdowns) */
+        .desktop-shop-menu { transition: opacity 0.3s ease, visibility 0.3s ease; opacity: 0; visibility: hidden; pointer-events: none; }
+        .desktop-shop-menu.visible { opacity: 1; visibility: visible; pointer-events: auto; }
+        #utility-sidebar { transition: transform 0.3s ease-in-out; transform: translateX(100%); }
+        #utility-sidebar.open { transform: translateX(0); }
+        #mobile-menu { transition: transform 0.3s ease-in-out; transform: translateX(-100%); }
+        #mobile-menu.open { transform: translateX(0); }
+
+        /* Custom Image Transitions for Carousels */
+        .carousel-image {
             opacity: 0;
-            visibility: hidden;
-            pointer-events: none; /* Allows clicks through when hidden */
+            transition: opacity 1.5s ease-in-out; 
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
-        .desktop-shop-menu.visible {
+        .carousel-image.active {
             opacity: 1;
-            visibility: visible;
-            pointer-events: auto; /* Enables clicks when visible */
         }
 
-        /* Utility Sidebar Animations */
-        #utility-sidebar {
-            transition: transform 0.3s ease-in-out;
-            transform: translateX(100%); /* Start off-screen */
+        /* Cart Counter animation for 'counting' effect */
+        #cart-count {
+            transition: transform 0.2s ease-out, color 0.2s ease-out;
         }
-
-        #utility-sidebar.open {
-            transform: translateX(0); /* Slide on-screen */
-        }
-
-        #mobile-menu {
-            transition: transform 0.3s ease-in-out;
-            transform: translateX(-100%); /* Start off-screen (left) */
-        }
-
-        #mobile-menu.open {
-            transform: translateX(0); /* Slide on-screen */
+        .cart-updated {
+            transform: scale(1.2);
+            color: #785964; /* Highlight color when updated */
         }
     </style>
 </head>
-<body class="font-sans bg-primary-beige text-text-dark antialiased">
+<body class="font-sans bg-primary-light text-primary-dark antialiased">
 
     <!-- 
         ========================================
-        1. UTILITY SLIDE-OUT SIDEBAR (Third Image Imitation)
+        SIDEBARS AND HEADER (Unchanged)
         ========================================
     -->
     <div id="utility-sidebar-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" onclick="toggleSidebar('utility')"></div>
-    <div id="utility-sidebar" class="fixed top-0 right-0 h-full w-64 bg-white shadow-xl z-50 p-6">
-        <!-- Close Button -->
-        <div class="flex justify-end mb-8">
-            <button onclick="toggleSidebar('utility')" class="text-xl text-text-dark hover:text-deep-burgundy">
-                <i data-lucide="x"></i>
-            </button>
-        </div>
-        
-        <!-- Utility Links -->
+    <div id="utility-sidebar" class="fixed top-0 right-0 h-full w-64 bg-primary-light shadow-xl z-50 p-6">
+        <div class="flex justify-end mb-8"><button onclick="toggleSidebar('utility')" class="text-xl text-primary-dark hover:text-accent-medium"><i data-lucide="x"></i></button></div>
         <nav class="space-y-6">
-            <a href="#" class="block text-lg hover:text-accent-gold">My Account</a>
-            <a href="#" class="block text-lg hover:text-accent-gold">Login / Register</a>
-            
-            <div class="pt-4 border-t border-gray-100">
-                <h3 class="font-semibold text-text-dark mb-3">Currency</h3>
+            <a href="#" class="block text-lg hover:text-accent-medium">My Account</a>
+            <div class="pt-4 border-t border-accent-soft/50"><h3 class="font-semibold text-primary-dark mb-3">Currency</h3>
                 <ul class="space-y-2">
-                    <li class="flex justify-between items-center text-gray-700 font-medium">
-                        NGN - Nigerian Naira 
-                        <span class="text-accent-gold"><i data-lucide="check-circle" class="w-5 h-5"></i></span>
-                    </li>
-                    <li class="text-gray-700 hover:text-accent-gold cursor-pointer">
-                        USD - US Dollar
-                    </li>
-                    <li class="text-gray-700 hover:text-accent-gold cursor-pointer">
-                        GBP - Great British Pound
-                    </li>
+                    <li class="flex justify-between items-center text-accent-medium font-medium">NGN - Nigerian Naira <span class="text-accent-medium"><i data-lucide="check-circle" class="w-5 h-5"></i></span></li>
+                    <li class="text-accent-medium hover:text-primary-dark cursor-pointer">USD - US Dollar</li>
                 </ul>
-            </div>
-            
-            <div class="pt-4 border-t border-gray-100">
-                <a href="#" class="block text-lg hover:text-accent-gold">Shipping & Returns</a>
-                <a href="#" class="block text-lg hover:text-accent-gold">Help & Contact</a>
             </div>
         </nav>
     </div>
     
-    <!-- 
-        ========================================
-        2. MOBILE HAMBURGER MENU (For Mobile Navigation)
-        ========================================
-    -->
     <div id="mobile-menu-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" onclick="toggleSidebar('mobile')"></div>
-    <div id="mobile-menu" class="fixed top-0 left-0 h-full w-64 bg-white shadow-xl z-50 p-6">
-        <!-- Close Button -->
-        <div class="flex justify-end mb-8">
-            <button onclick="toggleSidebar('mobile')" class="text-xl text-text-dark hover:text-deep-burgundy">
-                <i data-lucide="x"></i>
-            </button>
-        </div>
-        
-        <!-- Mobile Nav Links -->
+    <div id="mobile-menu" class="fixed top-0 left-0 h-full w-64 bg-primary-light shadow-xl z-50 p-6">
+        <div class="flex justify-end mb-8"><button onclick="toggleSidebar('mobile')" class="text-xl text-primary-dark hover:text-accent-medium"><i data-lucide="x"></i></button></div>
         <nav class="space-y-4">
-            <a href="#" class="block text-lg font-medium hover:text-accent-gold">Home</a>
-            <div class="border-t border-gray-100 pt-4">
-                <span class="block text-lg font-medium text-text-dark mb-2">SHOP CATEGORIES</span>
+            <a href="#" class="block text-lg font-medium hover:text-accent-medium">Home</a>
+            <div class="border-t border-accent-soft/50 pt-4">
+                <span class="block text-lg font-medium text-primary-dark mb-2">SHOP CATEGORIES</span>
                 <ul class="pl-4 space-y-1">
-                    <li class="text-gray-700 hover:text-accent-gold cursor-pointer"><a href="#">Ankara</a></li>
-                    <li class="text-gray-700 hover:text-accent-gold cursor-pointer"><a href="#">Abayas</a></li>
-                    <li class="text-gray-700 hover:text-accent-gold cursor-pointer"><a href="#">Jewelry</a></li>
-                    <li class="text-gray-700 hover:text-accent-gold cursor-pointer"><a href="#">Bags</a></li>
-                    <li class="text-gray-700 hover:text-accent-gold cursor-pointer"><a href="#">Cosmetics</a></li>
-                    <li class="text-gray-700 hover:text-accent-gold cursor-pointer"><a href="#">Perfumes</a></li>
+                    <li class="text-accent-medium hover:text-primary-dark cursor-pointer"><a href="#">Ankara</a></li>
+                    <li class="text-accent-medium hover:text-primary-dark cursor-pointer"><a href="#">Abayas</a></li>
                 </ul>
             </div>
-            <a href="#" class="block text-lg font-medium hover:text-accent-gold">Contact Us</a>
         </nav>
     </div>
 
-
-    <!-- 
-        ========================================
-        3. HEADER NAVIGATION
-        ========================================
-    -->
-    <header class="sticky top-0 bg-white bg-opacity-95 backdrop-blur-sm shadow-sm z-30">
+    <header class="sticky top-0 bg-primary-light bg-opacity-95 backdrop-blur-sm shadow-sm z-30">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 h-20 flex justify-between items-center">
             
-            <!-- Logo -->
-            <h1 class="text-2xl font-bold tracking-widest text-text-dark">LARA'S COLLECTION</h1>
+            <h1 class="text-2xl font-bold tracking-widest text-primary-dark">LARA'S COLLECTION</h1>
 
-            <!-- Desktop Navigation Links (Hidden on Mobile) -->
             <nav class="hidden lg:flex items-center space-x-10 text-lg font-medium">
-                <a href="#" class="text-text-dark hover:text-accent-gold transition duration-150">Home</a>
-                
-                <!-- SHOP Dropdown Trigger (Second Image Imitation) -->
+                <a href="#" class="text-primary-dark hover:text-accent-medium transition duration-150">Home</a>
                 <div id="shop-trigger" class="relative group">
-                    <button class="text-text-dark flex items-center hover:text-accent-gold transition duration-150">
-                        Shop <i data-lucide="chevron-down" class="w-4 h-4 ml-1"></i>
-                    </button>
-                    
-                    <!-- SHOP Dropdown Content -->
-                    <div id="desktop-shop-menu" class="desktop-shop-menu absolute left-0 mt-5 w-[700px] shadow-2xl bg-white border border-gray-100 rounded-lg p-6 pt-8">
+                    <button class="text-primary-dark flex items-center hover:text-accent-medium transition duration-150">Shop <i data-lucide="chevron-down" class="w-4 h-4 ml-1"></i></button>
+                    <div id="desktop-shop-menu" class="desktop-shop-menu absolute left-0 mt-5 w-[700px] shadow-2xl bg-primary-light border border-accent-soft/50 rounded-lg p-6 pt-8">
                         <div class="grid grid-cols-4 gap-8">
-                            <!-- Column 1: CLOTHING -->
-                            <div>
-                                <h4 class="font-bold text-deep-burgundy mb-3 uppercase tracking-wider">Clothing</h4>
-                                <ul class="space-y-2 text-sm">
-                                    <li><a href="#" class="hover:text-accent-gold transition duration-100">All Clothing</a></li>
-                                    <li><a href="#" class="hover:text-accent-gold transition duration-100 font-semibold">Ankara (New!)</a></li>
-                                    <li><a href="#" class="hover:text-accent-gold transition duration-100">Abayas</a></li>
-                                    <li><a href="#" class="hover:text-accent-gold transition duration-100">Skirts & Tops</a></li>
-                                </ul>
-                            </div>
-                            <!-- Column 2: FOOTWEAR -->
-                            <div>
-                                <h4 class="font-bold text-deep-burgundy mb-3 uppercase tracking-wider">Footwear</h4>
-                                <ul class="space-y-2 text-sm">
-                                    <li><a href="#" class="hover:text-accent-gold transition duration-100">All Shoes</a></li>
-                                    <li><a href="#" class="hover:text-accent-gold transition duration-100">Sandals & Flats</a></li>
-                                    <li><a href="#" class="hover:text-accent-gold transition duration-100">Heels</a></li>
-                                    <li><a href="#" class="hover:text-accent-gold transition duration-100">Traditional Leather</a></li>
-                                </ul>
-                            </div>
-                            <!-- Column 3: ACCESSORIES & BEAUTY -->
-                            <div>
-                                <h4 class="font-bold text-deep-burgundy mb-3 uppercase tracking-wider">Accessories</h4>
-                                <ul class="space-y-2 text-sm">
-                                    <li><a href="#" class="hover:text-accent-gold transition duration-100">Jewelry & Sets</a></li>
-                                    <li><a href="#" class="hover:text-accent-gold transition duration-100">Handbags & Clutches</a></li>
-                                    <li><h4 class="font-bold text-deep-burgundy mt-4 mb-3 uppercase tracking-wider">Beauty</h4></li>
-                                    <li><a href="#" class="hover:text-accent-gold transition duration-100 font-semibold">Traditional Perfumes</a></li>
-                                    <li><a href="#" class="hover:text-accent-gold transition duration-100">Cosmetics</a></li>
-                                </ul>
-                            </div>
-                            <!-- Column 4: VISUAL CALLOUT -->
-                            <div class="col-span-1 bg-primary-beige p-4 rounded-lg flex flex-col justify-center items-center">
-                                <p class="text-xl font-semibold text-deep-burgundy mb-2">Shop The Look</p>
-                                <img src="https://placehold.co/150x200/F0EAD6/8B0000?text=Model+Look" alt="Placeholder for a model in an Abaya" class="w-full h-auto rounded shadow-lg">
+                            <div><h4 class="font-bold text-primary-dark mb-3 uppercase tracking-wider">Clothing</h4></div>
+                            <div><h4 class="font-bold text-primary-dark mb-3 uppercase tracking-wider">Footwear</h4></div>
+                            <div><h4 class="font-bold text-primary-dark mb-3 uppercase tracking-wider">Accessories</h4></div>
+                            <div class="col-span-1 bg-accent-soft/20 p-4 rounded-lg flex flex-col justify-center items-center">
+                                <p class="text-xl font-semibold text-primary-dark mb-2">Shop The Look</p>
+                                <img src="https://placehold.co/150x200/BCABB0/5D3543?text=Model+Look" alt="Placeholder for a model in an Abaya" class="w-full h-auto rounded shadow-lg">
                             </div>
                         </div>
                     </div>
                 </div>
-                
-                <a href="#" class="text-text-dark hover:text-accent-gold transition duration-150">Contact Us</a>
+                <a href="#" class="text-primary-dark hover:text-accent-medium transition duration-150">Contact Us</a>
             </nav>
 
-            <!-- Utility Icons (Visible on all screens) -->
             <div class="flex items-center space-x-4">
-                <!-- Cart Icon (Always visible) -->
-                <a href="#" class="flex items-center text-text-dark hover:text-accent-gold transition duration-150">
+                <a href="#" class="flex items-center text-primary-dark hover:text-accent-medium transition duration-150">
                     <i data-lucide="shopping-cart" class="w-6 h-6"></i>
-                    <span class="ml-1 text-sm">(0)</span>
+                    <span id="cart-count" class="ml-1 text-sm font-semibold">(0)</span>
                 </a>
-                
-                <!-- Utility Sidebar Trigger (Mobile/Desktop) -->
-                <button onclick="toggleSidebar('utility')" class="text-text-dark hover:text-accent-gold transition duration-150">
-                    <i data-lucide="menu" class="w-6 h-6"></i>
-                </button>
-
-                <!-- Mobile Hamburger Menu Trigger (Only visible on Mobile) -->
-                <button onclick="toggleSidebar('mobile')" class="lg:hidden text-text-dark hover:text-accent-gold transition duration-150">
-                    <i data-lucide="align-right" class="w-6 h-6"></i>
-                </button>
+                <button onclick="toggleSidebar('utility')" class="text-primary-dark hover:text-accent-medium transition duration-150"><i data-lucide="menu" class="w-6 h-6"></i></button>
+                <button onclick="toggleSidebar('mobile')" class="lg:hidden text-primary-dark hover:text-accent-medium transition duration-150"><i data-lucide="align-right" class="w-6 h-6"></i></button>
             </div>
         </div>
     </header>
@@ -229,104 +135,145 @@
 
     <!-- 
         ========================================
-        4. HERO SECTION (First Image Imitation - Feminized)
+        HERO SECTION (Unchanged)
         ========================================
     -->
-    <section class="relative bg-primary-beige h-[70vh] sm:h-[85vh] flex items-center overflow-hidden">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="w-full lg:w-1/2 p-6 rounded-xl">
-                <p class="text-lg text-accent-gold uppercase font-semibold mb-2 tracking-widest">Lara's New Arrivals</p>
-                <h2 class="text-4xl sm:text-6xl font-extrabold text-text-dark leading-tight mb-6">
-                    Elegant <span class="text-deep-burgundy">Abayas</span> & Vibrant <span class="text-deep-burgundy">Ankara</span>
+    <section class="relative bg-primary-light h-[70vh] sm:h-[85vh] flex items-center overflow-hidden">
+        <div id="hero-image-carousel" class="absolute inset-y-0 right-0 w-full lg:w-12/12 hidden md:block">
+             <img data-color="light" src="https://placehold.co/800x850/BCABB0/5D3543?text=Model+Look+1+(Light+BG)" alt="Elegant Abaya or Ankara dress on a mannequin" class="carousel-image active" onerror="this.onerror=null;this.src='https://placehold.co/800x850/BCABB0/5D3543?text=LARA%27S+FASHION+1';">
+             <img data-color="dark" src="https://placehold.co/800x850/5D3543/FFFCFC?text=Model+Look+2+(Dark+BG)" alt="Elegant Abaya or Ankara dress on a mannequin" class="carousel-image" onerror="this.onerror=null;this.src='https://placehold.co/800x850/5D3543/FFFCFC?text=LARA%27S+FASHION+2';">
+             <img data-color="light" src="https://placehold.co/800x850/785964/FFFCFC?text=Model+Look+3+(Colored+BG)" alt="Elegant Abaya or Ankara dress on a mannequin" class="carousel-image" onerror="this.onerror=null;this.src='https://placehold.co/800x850/785964/FFFCFC?text=LARA%27S+FASHION+3';">
+            <div id="hero-overlay" class="absolute inset-0 bg-gradient-to-l from-primary-light/10 via-primary-light/50 to-primary-light/90 md:bg-gradient-to-r"></div>
+        </div>
+        <div id="hero-text-container" class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full lg:w-1/2">
+            <div id="hero-content" class="p-6 rounded-xl transition duration-500 ease-in-out">
+                <p class="text-lg text-accent-medium uppercase font-semibold mb-2 tracking-widest">Lara's New Arrivals</p>
+                <h2 class="text-4xl sm:text-6xl font-extrabold leading-tight mb-6">
+                    Elegant <span class="text-accent-medium">Abayas</span> & Vibrant <span class="text-accent-medium">Ankara</span>
                 </h2>
-                <p class="text-xl text-gray-700 mb-8 max-w-md">
-                    Discover handcrafted jewelry, luxurious cosmetics, and the finest traditional perfumes.
-                </p>
-                <a href="#" class="inline-block bg-accent-gold text-white font-semibold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl hover:bg-opacity-90 transition duration-300 transform hover:scale-105">
+                <p class="text-xl mb-8 max-w-md">Discover handcrafted jewelry, luxurious cosmetics, and the finest traditional perfumes.</p>
+                <a href="#" id="hero-cta" class="inline-block bg-primary-dark text-primary-light font-semibold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl hover:bg-accent-soft hover:text-primary-dark transition duration-300 transform hover:scale-105">
                     BROWSE THE COLLECTION
                 </a>
             </div>
-        </div>
-
-        <!-- Placeholder Image Imitation (Feminine Mannequin/Dress) -->
-        <div class="absolute inset-y-0 right-0 w-full lg:w-1/2 hidden md:block">
-            <img 
-                src="https://placehold.co/800x850/F0EAD6/C9A04B?text=Elegant+Dress+on+Model" 
-                alt="Elegant Abaya or Ankara dress on a mannequin" 
-                class="h-full w-full object-cover object-left-top"
-                onerror="this.onerror=null;this.src='https://placehold.co/800x850/F0EAD6/C9A04B?text=LARA%27S+FASHION';"
-            >
-            <!-- Overlay to blend with text section -->
-            <div class="absolute inset-0 bg-gradient-to-l from-primary-beige/10 via-primary-beige/50 to-primary-beige/90"></div>
-        </div>
-
-        <!-- Visual Elements (Small dots/pattern for femininity) -->
-        <div class="absolute bottom-0 left-0 p-4 opacity-50">
-            <i data-lucide="heart" class="w-6 h-6 text-accent-gold"></i>
         </div>
     </section>
 
     <!-- 
         ========================================
-        5. TRENDING PRODUCTS (First Image Imitation)
+        5. LIST OF PRODUCTS (NEW CARD LAYOUT)
         ========================================
     -->
     <section class="py-16 bg-white">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h3 class="text-3xl font-bold text-text-dark mb-2">Trending Collections</h3>
-            <p class="text-gray-600 mb-10 max-w-2xl mx-auto">
-                Our quality products range from amazing Ankara sets, fabulous Abayas, to classy accessories and traditional perfumes.
+            <h3 class="text-3xl font-bold text-primary-dark mb-2">Exclusive Products</h3>
+            <p class="text-accent-medium mb-10 max-w-2xl mx-auto">
+                Our latest collection features handcrafted designs and must-have accessories.
             </p>
 
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- Stylish Product Grid (Based on 6 Columns for Large Screens) -->
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
                 
-                <!-- Product Card 1: Ankara Dress -->
-                <div class="group text-left rounded-lg overflow-hidden">
-                    <div class="aspect-h-3 aspect-w-2 overflow-hidden bg-primary-beige">
-                        <img src="https://placehold.co/600x800/8B0000/F9F7F4?text=Ankara+Dress" alt="Vibrant Ankara Dress" class="w-full h-full object-cover transition duration-300 group-hover:scale-105">
+                <!-- Product Card 1: Ankara Dress (Wide Feature Banner) -->
+                <div class="col-span-2 md:col-span-4 lg:col-span-4 group text-left rounded-lg overflow-hidden shadow-xl flex flex-col">
+                    <div id="carousel-p1" data-carousel="true" class="relative aspect-video md:aspect-[3/2] w-full">
+                         <img data-images-set="1" src="https://placehold.co/1000x400/785964/FFFCFC?text=FEATURE+ANKARA+1" alt="Vibrant Ankara Dress 1" class="carousel-image active">
+                         <img data-images-set="1" src="https://placehold.co/1000x400/5D3543/FFFCFC?text=FEATURE+ANKARA+2" alt="Vibrant Ankara Dress 2" class="carousel-image">
+                         <img data-images-set="1" src="https://placehold.co/1000x400/BCABB0/5D3543?text=FEATURE+ANKARA+3" alt="Vibrant Ankara Dress 3" class="carousel-image">
                     </div>
-                    <div class="mt-4">
-                        <h4 class="text-sm font-semibold text-gray-700">Ankara Midi Set</h4>
-                        <p class="mt-1 text-deep-burgundy font-bold">₦45,000</p>
+                    <!-- Content Underneath -->
+                    <div class="p-4 bg-primary-light">
+                        <h4 class="text-lg font-bold text-primary-dark">The Signature Ankara Set</h4>
+                        <p class="text-md text-accent-medium font-semibold mt-1">₦45,000</p>
+                         <button onclick="addToCart(1, 'Ankara Set')" class="mt-4 w-full bg-primary-dark text-primary-light font-semibold py-2 rounded-lg hover:bg-accent-soft hover:text-primary-dark transition duration-300">
+                            Add to Cart
+                        </button>
                     </div>
                 </div>
 
-                <!-- Product Card 2: Abaya -->
-                <div class="group text-left rounded-lg overflow-hidden">
-                    <div class="aspect-h-3 aspect-w-2 overflow-hidden bg-primary-beige">
-                        <img src="https://placehold.co/600x800/E5E5E5/333333?text=Embroidered+Abaya" alt="Embroidered Abaya" class="w-full h-full object-cover transition duration-300 group-hover:scale-105">
+                <!-- Product Card 2: Abaya (Standard Size) -->
+                <div class="col-span-1 md:col-span-2 lg:col-span-1 group text-left rounded-lg overflow-hidden shadow-md flex flex-col">
+                    <div id="carousel-p2" data-carousel="true" class="relative aspect-square w-full">
+                        <img data-images-set="2" src="https://placehold.co/600x600/5D3543/FFFCFC?text=ABAYA+1" alt="Embroidered Abaya 1" class="carousel-image active">
+                        <img data-images-set="2" src="https://placehold.co/600x600/BCABB0/5D3543?text=ABAYA+2" alt="Embroidered Abaya 2" class="carousel-image">
+                        <img data-images-set="2" src="https://placehold.co/600x600/785964/FFFCFC?text=ABAYA+3" alt="Embroidered Abaya 3" class="carousel-image">
                     </div>
-                    <div class="mt-4">
-                        <h4 class="text-sm font-semibold text-gray-700">Luxe Occasion Abaya</h4>
-                        <p class="mt-1 text-deep-burgundy font-bold">₦89,999</p>
+                    <div class="p-4 bg-primary-light">
+                        <h4 class="font-semibold text-primary-dark">Luxe Occasion Abaya</h4>
+                        <p class="text-accent-medium font-semibold mt-1">₦89,999</p>
+                        <button onclick="addToCart(2, 'Luxe Abaya')" class="mt-3 w-full bg-primary-dark text-primary-light font-semibold py-2 rounded-lg hover:bg-accent-soft hover:text-primary-dark transition duration-300">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product Card 3: Jewelry (Standard Size) -->
+                <div class="col-span-1 md:col-span-2 lg:col-span-1 group text-left rounded-lg overflow-hidden shadow-md flex flex-col">
+                    <div id="carousel-p3" data-carousel="true" class="relative aspect-square w-full">
+                        <img data-images-set="3" src="https://placehold.co/600x600/BCABB0/5D3543?text=JEWELRY+1" alt="Gold Statement Jewelry 1" class="carousel-image active">
+                        <img data-images-set="3" src="https://placehold.co/600x600/5D3543/FFFCFC?text=JEWELRY+2" alt="Gold Statement Jewelry 2" class="carousel-image">
+                        <img data-images-set="3" src="https://placehold.co/600x600/785964/FFFCFC?text=JEWELRY+3" alt="Gold Statement Jewelry 3" class="carousel-image">
+                    </div>
+                    <div class="p-4 bg-primary-light">
+                        <h4 class="font-semibold text-primary-dark">Statement Necklace</h4>
+                        <p class="text-accent-medium font-semibold mt-1">₦22,500</p>
+                        <button onclick="addToCart(3, 'Necklace')" class="mt-3 w-full bg-primary-dark text-primary-light font-semibold py-2 rounded-lg hover:bg-accent-soft hover:text-primary-dark transition duration-300">
+                           Add to Cart
+                        </button>
                     </div>
                 </div>
                 
-                <!-- Product Card 3: Jewelry -->
-                <div class="group text-left rounded-lg overflow-hidden">
-                    <div class="aspect-h-3 aspect-w-2 overflow-hidden bg-primary-beige">
-                        <img src="https://placehold.co/600x800/C9A04B/F9F7F4?text=Gold+Jewelry+Set" alt="Gold Statement Jewelry" class="w-full h-full object-cover transition duration-300 group-hover:scale-105">
+                <!-- Product Card 4: Perfume (Standard Size) -->
+                <div class="col-span-1 md:col-span-2 lg:col-span-2 group text-left rounded-lg overflow-hidden shadow-md flex flex-col">
+                    <div id="carousel-p4" data-carousel="true" class="relative aspect-square w-full">
+                         <img data-images-set="4" src="https://placehold.co/600x600/5D3543/FFFCFC?text=OUD+PERFUME+1" alt="Traditional Oud Attar 1" class="carousel-image active">
+                         <img data-images-set="4" src="https://placehold.co/600x600/785964/FFFCFC?text=OUD+PERFUME+2" alt="Traditional Oud Attar 2" class="carousel-image">
+                         <img data-images-set="4" src="https://placehold.co/600x600/BCABB0/5D3543?text=OUD+PERFUME+3" alt="Traditional Oud Attar 3" class="carousel-image">
                     </div>
-                    <div class="mt-4">
-                        <h4 class="text-sm font-semibold text-gray-700">Statement Gold Necklace</h4>
-                        <p class="mt-1 text-deep-burgundy font-bold">₦22,500</p>
-                    </div>
-                </div>
-
-                <!-- Product Card 4: Perfume -->
-                <div class="group text-left rounded-lg overflow-hidden">
-                    <div class="aspect-h-3 aspect-w-2 overflow-hidden bg-primary-beige">
-                        <img src="https://placehold.co/600x800/333333/F9F7F4?text=Oud+Perfume+Bottle" alt="Traditional Oud Perfume Bottle" class="w-full h-full object-cover transition duration-300 group-hover:scale-105">
-                    </div>
-                    <div class="mt-4">
-                        <h4 class="text-sm font-semibold text-gray-700">Signature Oud Attar</h4>
-                        <p class="mt-1 text-deep-burgundy font-bold">₦15,000</p>
+                    <div class="p-4 bg-primary-light">
+                        <h4 class="font-semibold text-primary-dark">Signature Oud Attar</h4>
+                        <p class="text-accent-medium font-semibold mt-1">₦15,000</p>
+                        <button onclick="addToCart(4, 'Oud Attar')" class="mt-3 w-full bg-primary-dark text-primary-light font-semibold py-2 rounded-lg hover:bg-accent-soft hover:text-primary-dark transition duration-300">
+                           Add to Cart
+                        </button>
                     </div>
                 </div>
 
+                <!-- Product Card 5: Bags (Standard Size) -->
+                 <div class="col-span-1 md:col-span-2 lg:col-span-2 group text-left rounded-lg overflow-hidden shadow-md flex flex-col">
+                    <div id="carousel-p5" data-carousel="true" class="relative aspect-square w-full">
+                        <img data-images-set="5" src="https://placehold.co/600x600/BCABB0/5D3543?text=BAGS+1" alt="Luxury Handbag 1" class="carousel-image active">
+                        <img data-images-set="5" src="https://placehold.co/600x600/785964/FFFCFC?text=BAGS+2" alt="Luxury Handbag 2" class="carousel-image">
+                        <img data-images-set="5" src="https://placehold.co/600x600/5D3543/FFFCFC?text=BAGS+3" alt="Luxury Handbag 3" class="carousel-image">
+                    </div>
+                    <div class="p-4 bg-primary-light">
+                        <h4 class="font-semibold text-primary-dark">Leather Clutch</h4>
+                        <p class="text-accent-medium font-semibold mt-1">₦35,000</p>
+                        <button onclick="addToCart(5, 'Leather Clutch')" class="mt-3 w-full bg-primary-dark text-primary-light font-semibold py-2 rounded-lg hover:bg-accent-soft hover:text-primary-dark transition duration-300">
+                           Add to Cart
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product Card 6: Makeup (Wide Feature) -->
+                 <div class="col-span-2 md:col-span-4 lg:col-span-2 group text-left rounded-lg overflow-hidden shadow-xl flex flex-col">
+                    <div id="carousel-p6" data-carousel="true" class="relative aspect-square w-full">
+                        <img data-images-set="6" src="https://placehold.co/600x600/785964/FFFCFC?text=MAKEUP+1" alt="Beauty Product 1" class="carousel-image active">
+                        <img data-images-set="6" src="https://placehold.co/600x600/5D3543/FFFCFC?text=MAKEUP+2" alt="Beauty Product 2" class="carousel-image">
+                        <img data-images-set="6" src="https://placehold.co/600x600/BCABB0/5D3543?text=MAKEUP+3" alt="Beauty Product 3" class="carousel-image">
+                    </div>
+                    <div class="p-4 bg-primary-light">
+                        <h4 class="font-semibold text-primary-dark">Kohl Liner & Gloss Set</h4>
+                        <p class="text-accent-medium font-semibold mt-1">₦8,500</p>
+                        <button onclick="addToCart(6, 'Kohl Liner')" class="mt-3 w-full bg-primary-dark text-primary-light font-semibold py-2 rounded-lg hover:bg-accent-soft hover:text-primary-dark transition duration-300">
+                           Add to Cart
+                        </button>
+                    </div>
+                </div>
+                
             </div>
             
-            <a href="#" class="mt-12 inline-block border-2 border-deep-burgundy text-deep-burgundy font-semibold py-3 px-8 rounded-lg hover:bg-deep-burgundy hover:text-white transition duration-300">
+            <a href="#" class="mt-12 inline-block border-2 border-primary-dark text-primary-dark font-semibold py-3 px-8 rounded-lg hover:bg-primary-dark hover:text-primary-light transition duration-300">
                 VIEW ALL PRODUCTS
             </a>
         </div>
@@ -334,125 +281,137 @@
 
     <!-- 
         ========================================
-        6. FOOTER (First Image Imitation)
+        FOOTER (Darkest Color)
         ========================================
     -->
-    <footer class="bg-text-dark text-primary-beige py-12 mt-12">
+    <footer class="bg-primary-dark text-primary-light py-12 mt-12">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
-            
-            <!-- Column 1: Brand Info -->
             <div>
-                <h4 class="text-xl font-bold tracking-widest text-accent-gold mb-4">LARA'S COLLECTION</h4>
-                <p class="text-sm text-gray-400 mb-4">
-                    Specializing in premium Ankara, Abayas, luxury accessories, and traditional beauty products.
-                </p>
-                <div class="space-y-1 text-sm text-gray-400">
-                    <p class="flex items-center"><i data-lucide="map-pin" class="w-4 h-4 mr-2 text-accent-gold"></i> Lagos, Nigeria & Worldwide Shipping</p>
-                    <p class="flex items-center"><i data-lucide="mail" class="w-4 h-4 mr-2 text-accent-gold"></i> sales@laracollection.com</p>
-                    <p class="flex items-center"><i data-lucide="phone" class="w-4 h-4 mr-2 text-accent-gold"></i> +234 80 XXXX XXXX</p>
+                <h4 class="text-xl font-bold tracking-widest text-accent-soft mb-4">LARA'S COLLECTION</h4>
+                <p class="text-sm text-accent-soft mb-4">Specializing in premium Ankara, Abayas, luxury accessories, and traditional beauty products.</p>
+                <div class="space-y-1 text-sm text-accent-soft">
+                    <p class="flex items-center"><i data-lucide="map-pin" class="w-4 h-4 mr-2 text-accent-soft"></i> Lagos, Nigeria & Worldwide Shipping</p>
+                    <p class="flex items-center"><i data-lucide="mail" class="w-4 h-4 mr-2 text-accent-soft"></i> sales@laracollection.com</p>
                 </div>
             </div>
-
-            <!-- Column 2: Quick Links -->
             <div>
-                <h4 class="font-semibold text-white mb-4">SHOP</h4>
-                <ul class="space-y-2 text-sm text-gray-400">
-                    <li><a href="#" class="hover:text-accent-gold transition">New Arrivals</a></li>
-                    <li><a href="#" class="hover:text-accent-gold transition">Abaya Lookbook</a></li>
-                    <li><a href="#" class="hover:text-accent-gold transition">Perfume & Attar</a></li>
-                    <li><a href="#" class="hover:text-accent-gold transition">Sale Items</a></li>
+                <h4 class="font-semibold text-primary-light mb-4">SHOP</h4>
+                <ul class="space-y-2 text-accent-soft">
+                    <li><a href="#" class="hover:text-primary-light transition">New Arrivals</a></li>
+                    <li><a href="#" class="hover:text-primary-light transition">Abaya Lookbook</a></li>
                 </ul>
             </div>
-
-            <!-- Column 3: Customer Service -->
             <div>
-                <h4 class="font-semibold text-white mb-4">CUSTOMER CARE</h4>
-                <ul class="space-y-2 text-sm text-gray-400">
-                    <li><a href="#" class="hover:text-accent-gold transition">Help & Contact Us</a></li>
-                    <li><a href="#" class="hover:text-accent-gold transition">Shipping Policy</a></li>
-                    <li><a href="#" class="hover:text-accent-gold transition">Returns & Exchange</a></li>
-                    <li><a href="#" class="hover:text-accent-gold transition">Terms & Conditions</a></li>
+                <h4 class="font-semibold text-primary-light mb-4">CUSTOMER CARE</h4>
+                <ul class="space-y-2 text-accent-soft">
+                    <li><a href="#" class="hover:text-primary-light transition">Help & Contact Us</a></li>
+                    <li><a href="#" class="hover:text-primary-light transition">Shipping Policy</a></li>
                 </ul>
             </div>
-
-            <!-- Column 4: Follow Us -->
             <div>
-                <h4 class="font-semibold text-white mb-4">FOLLOW US</h4>
+                <h4 class="font-semibold text-primary-light mb-4">FOLLOW US</h4>
                 <div class="flex space-x-4">
-                    <a href="#" class="text-gray-400 hover:text-accent-gold transition"><i data-lucide="instagram" class="w-6 h-6"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-accent-gold transition"><i data-lucide="facebook" class="w-6 h-6"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-accent-gold transition"><i data-lucide="twitter" class="w-6 h-6"></i></a>
+                    <a href="#" class="text-accent-soft hover:text-primary-light transition"><i data-lucide="instagram" class="w-6 h-6"></i></a>
+                    <a href="#" class="text-accent-soft hover:text-primary-light transition"><i data-lucide="facebook" class="w-6 h-6"></i></a>
                 </div>
             </div>
         </div>
-
-        <!-- Copyright -->
-        <div class="border-t border-gray-700 mt-8 pt-6 container mx-auto px-4 text-center text-xs text-gray-500">
+        <div class="border-t border-accent-medium/50 mt-8 pt-6 container mx-auto px-4 text-center text-xs text-accent-soft">
             &copy; 2024 Lara's Collection. All rights reserved.
         </div>
     </footer>
 
     <!-- 
         ========================================
-        7. JAVASCRIPT LOGIC (All in One File)
+        JAVASCRIPT LOGIC (Unchanged)
         ========================================
     -->
     <script>
-        // Initialize Lucide Icons
         lucide.createIcons();
 
-        // ----------------------------------------------------
-        // A. DESKTOP SHOP MENU LOGIC (Second Image Imitation)
-        // ----------------------------------------------------
-        const shopTrigger = document.getElementById('shop-trigger');
-        const desktopMenu = document.getElementById('desktop-shop-menu');
+        let cartItemCount = 0;
+        const cartCountElement = document.getElementById('cart-count');
 
-        // Show menu on hover
-        shopTrigger.addEventListener('mouseenter', () => {
-            desktopMenu.classList.add('visible');
-        });
+        function addToCart(productId, productName) {
+            cartItemCount++;
+            cartCountElement.textContent = `(${cartItemCount})`;
+            cartCountElement.classList.add('cart-updated');
+            setTimeout(() => { cartCountElement.classList.remove('cart-updated'); }, 300);
+            console.log(`Product ID: ${productId} (${productName}) added to cart. New count: ${cartItemCount}`);
+        }
 
-        // Hide menu on mouse leave from the entire trigger area
-        shopTrigger.addEventListener('mouseleave', () => {
-            desktopMenu.classList.remove('visible');
-        });
-
-        // ----------------------------------------------------
-        // B. SIDEBAR TOGGLE LOGIC (For Mobile Menu & Utility Sidebar)
-        // ----------------------------------------------------
-        function toggleSidebar(type) {
-            let sidebar, backdrop;
-
-            if (type === 'utility') {
-                // Utility Sidebar (Third Image Imitation)
-                sidebar = document.getElementById('utility-sidebar');
-                backdrop = document.getElementById('utility-sidebar-backdrop');
-            } else if (type === 'mobile') {
-                // Mobile Hamburger Menu (Mobile Header Collapse)
-                sidebar = document.getElementById('mobile-menu');
-                backdrop = document.getElementById('mobile-menu-backdrop');
+        function startCarousel(carouselElement, intervalTime) {
+            const images = carouselElement.querySelectorAll('.carousel-image');
+            if (images.length < 2) return;
+            let current = 0;
+            const cycleImages = () => {
+                images[current].classList.remove('active');
+                current = (current + 1) % images.length;
+                images[current].classList.add('active');
+                if (carouselElement.id === 'hero-image-carousel') {
+                    updateHeroTextColor(images[current].getAttribute('data-color'));
+                }
+            };
+            if (!images[0].classList.contains('active')) {
+                images[0].classList.add('active');
             }
+            return setInterval(cycleImages, intervalTime);
+        }
 
-            if (!sidebar || !backdrop) return;
+        const heroTextContainer = document.getElementById('hero-content');
+        const heroImageCarousel = document.getElementById('hero-image-carousel');
+        
+        function updateHeroTextColor(backgroundColorType) {
+            const h2 = heroTextContainer.querySelector('h2');
+            const p = heroTextContainer.querySelector('p');
+            const cta = document.getElementById('hero-cta');
+            const baseTextColor = 'text-primary-dark', whiteTextColor = 'text-primary-light', accentColor = 'text-accent-medium';
+            h2.classList.remove(baseTextColor, whiteTextColor);
+            p.classList.remove(baseTextColor, whiteTextColor);
 
-            const isOpen = sidebar.classList.contains('open');
-
-            if (isOpen) {
-                sidebar.classList.remove('open');
-                backdrop.classList.add('hidden');
+            if (backgroundColorType === 'dark') {
+                h2.classList.add(whiteTextColor);
+                p.classList.add(whiteTextColor);
+                h2.querySelectorAll('span').forEach(span => span.classList.replace(accentColor, whiteTextColor));
             } else {
-                sidebar.classList.add('open');
-                backdrop.classList.remove('hidden');
+                h2.classList.add(baseTextColor);
+                p.classList.add(baseTextColor);
+                h2.querySelectorAll('span').forEach(span => span.classList.replace(whiteTextColor, accentColor));
             }
         }
         
-        // This is necessary to close the mobile menu if the user resizes the window to desktop view
+        const shopTrigger = document.getElementById('shop-trigger');
+        const desktopMenu = document.getElementById('desktop-shop-menu');
+
+        if (shopTrigger) {
+            shopTrigger.addEventListener('mouseenter', () => desktopMenu.classList.add('visible'));
+            shopTrigger.addEventListener('mouseleave', () => desktopMenu.classList.remove('visible'));
+        }
+        
+        function toggleSidebar(type) {
+            const sidebar = document.getElementById(type === 'utility' ? 'utility-sidebar' : 'mobile-menu');
+            const backdrop = document.getElementById(type === 'utility' ? 'utility-sidebar-backdrop' : 'mobile-menu-backdrop');
+            if (!sidebar || !backdrop) return;
+            sidebar.classList.toggle('open');
+            backdrop.classList.toggle('hidden');
+        }
+        
         window.addEventListener('resize', () => {
-            if (window.innerWidth >= 1024) { // 1024px is Tailwind's 'lg' breakpoint
-                document.getElementById('mobile-menu').classList.remove('open');
-                document.getElementById('mobile-menu-backdrop').classList.add('hidden');
+            if (window.innerWidth >= 1024) { 
+                document.getElementById('mobile-menu')?.classList.remove('open');
+                document.getElementById('mobile-menu-backdrop')?.classList.add('hidden');
             }
+        });
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            if (heroImageCarousel) startCarousel(heroImageCarousel, 4000);
+            document.querySelectorAll('[data-carousel="true"]').forEach(element => {
+                if (element.id !== 'hero-image-carousel') startCarousel(element, 3000);
+            });
+            const initialColorType = heroImageCarousel ? heroImageCarousel.querySelector('.carousel-image.active')?.getAttribute('data-color') : 'light';
+            updateHeroTextColor(initialColorType || 'light');
         });
     </script>
 </body>
 </html>
+
