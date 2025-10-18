@@ -218,16 +218,18 @@ tailwind.config = {
                     <i data-lucide="shopping-cart" class="w-6 h-6"></i>
                     <span class="ml-1 text-sm">(0)</span>
                 </a>
+                <!-- Mobile Hamburger Menu Trigger (Only visible on Mobile) -->
+                <button onclick="toggleSidebar('mobile')" class="lg:hidden text-text-dark hover:text-accent-gold transition duration-150">
+                    <i data-lucide="user" class="w-6 h-6"></i>
+                </button>
+
                 
                 <!-- Utility Sidebar Trigger -->
                 <button onclick="toggleSidebar('utility')" class="text-text-dark hover:text-accent-gold transition duration-150">
                     <i data-lucide="menu" class="w-6 h-6"></i>
                 </button>
 
-                <!-- Mobile Hamburger Menu Trigger (Only visible on Mobile) -->
-                <button onclick="toggleSidebar('mobile')" class="lg:hidden text-text-dark hover:text-accent-gold transition duration-150">
-                    <i data-lucide="user" class="w-6 h-6"></i>
-                </button>
+                
             </div>
         </div>
     </header>
