@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipping & Returns Policy | Lara's Collection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sacramento&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+
+    <style>
+        .brand-name {
+            font-family: 'Sacramento', cursive;
+        }
+        /* Styles copied from previous pages */
+        .desktop-shop-menu {
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .desktop-shop-menu.visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        #utility-sidebar {
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(100%);
+        }
+        #utility-sidebar.open {
+            transform: translateX(0);
+        }
+        #mobile-menu {
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(-100%);
+        }
+        #mobile-menu.open {
+            transform: translateX(0);
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-beige': '#F9F7F4',
+                        'accent-gold': '#C9A04B',
+                        'deep-burgundy': '#8B0000',
+                        'text-dark': '#333333',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-sans bg-primary-beige text-text-dark antialiased">
+
+    <div id="utility-sidebar-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" onclick="toggleSidebar('utility')"></div>
+    <div id="utility-sidebar" class="fixed top-0 right-0 h-full w-64 bg-white shadow-xl z-50 p-6">
+        <div class="flex justify-end mb-8">
+            <button onclick="toggleSidebar('utility')" class="text-xl text-text-dark hover:text-deep-burgundy"><i data-lucide="x"></i></button>
+        </div>
+        <nav class="space-y-6">
+            <a href="account.html" class="block text-lg hover:text-accent-gold">My Account</a>
+        </nav>
+    </div>
+    
+    <div id="mobile-menu-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" onclick="toggleSidebar('mobile')"></div>
+    <div id="mobile-menu" class="fixed top-0 left-0 h-full w-64 bg-white shadow-xl z-50 p-6">
+        <div class="flex justify-end mb-8">
+            <button onclick="toggleSidebar('mobile')" class="text-xl text-text-dark hover:text-deep-burgundy"><i data-lucide="x"></i></button>
+        </div>
+        <nav class="space-y-4">
+            <a href="index.html" class="block text-lg font-medium hover:text-accent-gold">Home</a>
+            <a href="shop.html" class="block text-lg font-medium hover:text-accent-gold">Shop</a>
+            <a href="#" class="block text-lg font-medium hover:text-accent-gold">Contact Us</a>
+        </nav>
+    </div>
+
+    <header class="sticky top-0 bg-white bg-opacity-95 backdrop-blur-sm shadow-sm z-30">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 h-20 flex justify-between items-center">
+            <h1 class="text-2xl font-bold tracking-widest text-text-dark"><span class="brand-name" >Lara's Collection</span></h1>
+
+            <nav class="hidden lg:flex items-center space-x-10 text-lg font-medium">
+                <a href="index.html" class="text-text-dark hover:text-accent-gold transition duration-150">Home</a>
+                <a href="shop.html" class="text-text-dark hover:text-accent-gold transition duration-150">Shop</a>
+                <a href="#" class="text-text-dark hover:text-accent-gold transition duration-150">Contact Us</a>
+            </nav>
+
+            <div class="flex items-center space-x-4">
+                <a href="cart.html" class="flex items-center text-text-dark hover:text-accent-gold transition duration-150">
+                    <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+                    <span id="cart-count" class="ml-1 text-sm">(0)</span>
+                </a>
+                <button onclick="toggleSidebar('utility')" class="text-text-dark hover:text-accent-gold transition duration-150">
+                   <i data-lucide="user" class="w-6 h-6"></i>
+                </button>
+                <button onclick="toggleSidebar('mobile')" class="lg:hidden text-text-dark hover:text-accent-gold transition duration-150">
+                    <i data-lucide="align-right" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="max-w-4xl mx-auto bg-white p-8 md:p-12 rounded-lg shadow-xl">
+            <h2 class="text-4xl font-extrabold text-deep-burgundy mb-4">Shipping & Returns</h2>
+            <p class="text-gray-600 mb-12">Last Updated: October 18, 2024</p>
+
+            <section class="mb-12">
+                <h3 class="text-3xl font-bold text-text-dark mb-6 border-b pb-3 flex items-center">
+                    <i data-lucide="truck" class="w-7 h-7 mr-3 text-accent-gold"></i> Shipping Policy
+                </h3>
+
+                <h4 class="text-xl font-semibold text-text-dark mt-6 mb-3">1. Processing Time</h4>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    All orders are processed within <strong>1–2 business days</strong> (excluding weekends and holidays) after receiving your order confirmation email. You will receive another notification when your order has shipped. Delays may occur during peak sales periods.
+                </p>
+
+                <h4 class="text-xl font-semibold text-text-dark mb-3">2. Domestic Shipping Rates and Estimates (Nigeria)</h4>
+                <p class="text-gray-700 leading-relaxed mb-2">Shipping charges for your order will be calculated and displayed at checkout.</p>
+                <ul class="list-disc list-inside space-y-2 pl-4 text-gray-700">
+                    <li><strong>Lagos Metropolitan Area:</strong> Flat rate of NGN 3,500. Delivery in 1–2 business days.</li>
+                    <li><strong>Major Cities (Abuja, Port Harcourt, Kano):</strong> Flat rate of NGN 5,000. Delivery in 3–5 business days.</li>
+                    <li><strong>Rest of Nigeria:</strong> Calculated at checkout based on weight/location. Delivery in 5–7 business days.</li>
+                    <li><strong>Free Shipping:</strong> Available on all orders over NGN 100,000.</li>
+                </ul>
+                
+                <h4 class="text-xl font-semibold text-text-dark mt-6 mb-3">3. International Shipping</h4>
+                <p class="text-gray-700 leading-relaxed">
+                    We offer shipping to select international destinations. Shipping rates and delivery times will be calculated at checkout. Please note, international orders may be subject to import duties and taxes (including VAT) which are incurred once a shipment reaches your destination country. Lara's Collection is **not** responsible for these charges.
+                </p>
+            </section>
+
+            <div class="border-t border-gray-200 my-12"></div>
+
+            <section>
+                <h3 class="text-3xl font-bold text-text-dark mb-6 border-b pb-3 flex items-center">
+                    <i data-lucide="rotate-ccw" class="w-7 h-7 mr-3 text-accent-gold"></i> Returns & Exchanges
+                </h3>
+
+                <h4 class="text-xl font-semibold text-text-dark mt-6 mb-3">1. Return Window</h4>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    We accept returns and exchanges for unworn, unwashed, undamaged items with all original tags attached within <strong>14 days</strong> of delivery.
+                </p>
+                
+                <h4 class="text-xl font-semibold text-text-dark mb-3">2. Eligibility & Non-returnable Items</h4>
+                <ul class="list-disc list-inside space-y-2 pl-4 text-gray-700 mb-4">
+                    <li>Items must be returned in their original packaging.</li>
+                    <li>Items damaged due to customer misuse will not be accepted.</li>
+                    <li>**Non-Returnable Items:** For hygiene reasons, all **Jewelry**, **Traditional Perfumes/Attar**, and **Sale/Clearance** items are final sale and cannot be returned or exchanged.</li>
+                </ul>
+
+                <h4 class="text-xl font-semibold text-text-dark mb-3">3. How to Initiate a Return</h4>
+                <ol class="list-decimal list-inside space-y-2 pl-4 text-gray-700">
+                    <li>Log in to your account via the <a href="account.html" class="text-accent-gold hover:text-deep-burgundy font-medium">My Account</a> page.</li>
+                    <li>Navigate to "My Orders" and select the order you wish to return.</li>
+                    <li>Click the "Request Return" button and follow the steps provided.</li>
+                    <li>Once approved, you will be provided with a return shipping label and instructions.</li>
+                </ol>
+            </section>
+            
+            <p class="mt-12 text-center text-lg font-medium text-deep-burgundy">
+                If you have any further questions, please contact us at <a href="mailto:support@larascollection.com" class="text-accent-gold hover:text-deep-burgundy">support@larascollection.com</a>.
+            </p>
+        </div>
+    </main>
+
+
+    <footer class="bg-text-dark text-primary-beige py-12 mt-12">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+                <h4 class="text-xl font-bold tracking-widest text-accent-gold mb-4"><span class="brand-name" >Lara's Collection</span></h4>
+            </div>
+            <div>
+                <h4 class="font-semibold text-white mb-4">SHOP</h4>
+                <ul class="space-y-2 text-sm text-gray-400">
+                    <li><a href="shop.html" class="hover:text-accent-gold transition">New Arrivals</a></li>
+                    <li><a href="shop.html?category=Abayas" class="hover:text-accent-gold transition">Abaya Lookbook</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-semibold text-white mb-4">CUSTOMER CARE</h4>
+                <ul class="space-y-2 text-sm text-gray-400">
+                    <li><a href="#" class="hover:text-accent-gold transition">Help & Contact Us</a></li>
+                    <li><a href="Shipping-&-Returns.html" class="hover:text-accent-gold transition">Shipping & Returns</a></li>
+                    <li><a href="#" class="hover:text-accent-gold transition">FAQ</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-semibold text-white mb-4">FOLLOW US</h4>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-accent-gold transition"><i data-lucide="instagram" class="w-6 h-6"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-accent-gold transition"><i data-lucide="facebook" class="w-6 h-6"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="border-t border-gray-700 mt-8 pt-6 container mx-auto px-4 text-center text-xs text-gray-500">
+            &copy; 2024 Lara's Collection. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+        
+        // --- Shared UI Logic (Sidebar) ---
+        function toggleSidebar(type) {
+            let sidebar, backdrop;
+            if (type === 'utility') {
+                sidebar = document.getElementById('utility-sidebar');
+                backdrop = document.getElementById('utility-sidebar-backdrop');
+            } else if (type === 'mobile') {
+                sidebar = document.getElementById('mobile-menu');
+                backdrop = document.getElementById('mobile-menu-backdrop');
+            }
+            if (!sidebar || !backdrop) return;
+            const isOpen = sidebar.classList.contains('open');
+            if (isOpen) {
+                sidebar.classList.remove('open');
+                backdrop.classList.add('hidden');
+            } else {
+                sidebar.classList.add('open');
+                backdrop.classList.remove('hidden');
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Update cart count (copied from cart.html)
+            const cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
+            document.getElementById('cart-count').textContent = `(${cartItems.length})`;
+        });
+    </script>
+</body>
+</html>

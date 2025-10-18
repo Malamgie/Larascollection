@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help & Contact Us | Lara's Collection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sacramento&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+
+    <style>
+        .brand-name {
+            font-family: 'Sacramento', cursive;
+        }
+        /* Styles copied from previous pages */
+        .desktop-shop-menu {
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .desktop-shop-menu.visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        #utility-sidebar {
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(100%);
+        }
+        #utility-sidebar.open {
+            transform: translateX(0);
+        }
+        #mobile-menu {
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(-100%);
+        }
+        #mobile-menu.open {
+            transform: translateX(0);
+        }
+
+        /* NEW: FAQ Accordion Styles */
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+        .faq-answer.open {
+            max-height: 500px; /* Adjust to accommodate maximum content height */
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-beige': '#F9F7F4',
+                        'accent-gold': '#C9A04B',
+                        'deep-burgundy': '#8B0000',
+                        'text-dark': '#333333',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-sans bg-primary-beige text-text-dark antialiased">
+
+    <div id="utility-sidebar-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" onclick="toggleSidebar('utility')"></div>
+    <div id="utility-sidebar" class="fixed top-0 right-0 h-full w-64 bg-white shadow-xl z-50 p-6">
+        <div class="flex justify-end mb-8">
+            <button onclick="toggleSidebar('utility')" class="text-xl text-text-dark hover:text-deep-burgundy"><i data-lucide="x"></i></button>
+        </div>
+        <nav class="space-y-6">
+            <a href="account.html" class="block text-lg hover:text-accent-gold">My Account</a>
+        </nav>
+    </div>
+    
+    <div id="mobile-menu-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" onclick="toggleSidebar('mobile')"></div>
+    <div id="mobile-menu" class="fixed top-0 left-0 h-full w-64 bg-white shadow-xl z-50 p-6">
+        <div class="flex justify-end mb-8">
+            <button onclick="toggleSidebar('mobile')" class="text-xl text-text-dark hover:text-deep-burgundy"><i data-lucide="x"></i></button>
+        </div>
+        <nav class="space-y-4">
+            <a href="index.html" class="block text-lg font-medium hover:text-accent-gold">Home</a>
+            <a href="shop.html" class="block text-lg font-medium hover:text-accent-gold">Shop</a>
+            <a href="Help-&-Contact.html" class="block text-lg font-medium hover:text-accent-gold">Contact Us</a>
+        </nav>
+    </div>
+
+    <header class="sticky top-0 bg-white bg-opacity-95 backdrop-blur-sm shadow-sm z-30">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 h-20 flex justify-between items-center">
+            <h1 class="text-2xl font-bold tracking-widest text-text-dark"><span class="brand-name" >Lara's Collection</span></h1>
+
+            <nav class="hidden lg:flex items-center space-x-10 text-lg font-medium">
+                <a href="index.html" class="text-text-dark hover:text-accent-gold transition duration-150">Home</a>
+                <a href="shop.html" class="text-text-dark hover:text-accent-gold transition duration-150">Shop</a>
+                <a href="Help-&-Contact.html" class="text-deep-burgundy font-bold transition duration-150">Contact Us</a>
+            </nav>
+
+            <div class="flex items-center space-x-4">
+                <a href="cart.html" class="flex items-center text-text-dark hover:text-accent-gold transition duration-150">
+                    <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+                    <span id="cart-count" class="ml-1 text-sm">(0)</span>
+                </a>
+                <button onclick="toggleSidebar('utility')" class="text-text-dark hover:text-accent-gold transition duration-150">
+                   <i data-lucide="user" class="w-6 h-6"></i>
+                </button>
+                <button onclick="toggleSidebar('mobile')" class="lg:hidden text-text-dark hover:text-accent-gold transition duration-150">
+                    <i data-lucide="align-right" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-5xl font-extrabold text-text-dark mb-4 text-center">How Can We Help?</h2>
+            <p class="text-xl text-gray-600 mb-12 text-center">Find quick answers below or reach out to our customer care team.</p>
+
+            <div class="grid lg:grid-cols-3 gap-10">
+                
+                <section class="lg:col-span-2">
+                    <h3 class="text-3xl font-bold text-deep-burgundy mb-6 border-b pb-3 flex items-center">
+                        <i data-lucide="clipboard-check" class="w-7 h-7 mr-3 text-accent-gold"></i> Frequently Asked Questions
+                    </h3>
+
+                    <div id="faq-accordion" class="space-y-4">
+                        
+                        <div class="bg-white rounded-lg shadow-md border border-gray-100">
+                            <button class="faq-toggle w-full flex justify-between items-center p-5 text-lg font-medium text-left hover:bg-gray-50 transition" data-target="faq-1">
+                                <span>1. How long does shipping take within Nigeria?</span>
+                                <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
+                            </button>
+                            <div id="faq-1" class="faq-answer px-5 text-gray-700">
+                                <p>Shipping times depend on your location:</p>
+                                <ul class="list-disc list-inside pl-4 mt-2">
+                                    <li><strong>Lagos:</strong> 1–2 business days.</li>
+                                    <li><strong>Major Cities:</strong> 3–5 business days.</li>
+                                    <li><strong>Other Areas:</strong> 5–7 business days.</li>
+                                </ul>
+                                <p class="mt-2">Note that processing time (1–2 business days) is separate from shipping time.</p>
+                                <p class="mt-2 text-sm">For full details, visit our <a href="Shipping-&-Returns.html" class="text-accent-gold hover:text-deep-burgundy font-medium">Shipping & Returns</a> page.</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg shadow-md border border-gray-100">
+                            <button class="faq-toggle w-full flex justify-between items-center p-5 text-lg font-medium text-left hover:bg-gray-50 transition" data-target="faq-2">
+                                <span>2. What is your return and exchange policy?</span>
+                                <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
+                            </button>
+                            <div id="faq-2" class="faq-answer px-5 text-gray-700">
+                                <p>We offer a **14-day return window** from the date of delivery. Items must be unworn, unwashed, and have all original tags. Note that **jewelry and sale items are final sale**.</p>
+                                <p class="mt-2">To start a return, please log in to your account and go to the "My Orders" section.</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg shadow-md border border-gray-100">
+                            <button class="faq-toggle w-full flex justify-between items-center p-5 text-lg font-medium text-left hover:bg-gray-50 transition" data-target="faq-3">
+                                <span>3. Where can I find the size chart?</span>
+                                <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
+                            </button>
+                            <div id="faq-3" class="faq-answer px-5 text-gray-700">
+                                <p>Our detailed size chart is available on every **Product Detail Page (PDP)**. We recommend checking the specific measurements for each product, as fits can vary slightly between collections.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow-md border border-gray-100">
+                            <button class="faq-toggle w-full flex justify-between items-center p-5 text-lg font-medium text-left hover:bg-gray-50 transition" data-target="faq-4">
+                                <span>4. What payment methods do you accept?</span>
+                                <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
+                            </button>
+                            <div id="faq-4" class="faq-answer px-5 text-gray-700">
+                                <p>We accept all major credit and debit cards (Visa, Mastercard), bank transfers, and common Nigerian payment gateways like Paystack and Flutterwave.</p>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </section>
+
+                <aside class="lg:col-span-1">
+                    <h3 class="text-3xl font-bold text-deep-burgundy mb-6 border-b pb-3 flex items-center">
+                        <i data-lucide="send" class="w-7 h-7 mr-3 text-accent-gold"></i> Get In Touch
+                    </h3>
+
+                    <div class="bg-white p-6 rounded-lg shadow-md space-y-4 mb-8">
+                        <div class="flex items-start">
+                            <i data-lucide="mail" class="w-6 h-6 text-deep-burgundy mr-4 mt-1"></i>
+                            <div>
+                                <p class="font-semibold text-text-dark">Email Support</p>
+                                <a href="mailto:support@larascollection.com" class="text-accent-gold hover:text-deep-burgundy">support@larascollection.com</a>
+                                <p class="text-sm text-gray-500">Response within 24 hours (Mon-Fri)</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <i data-lucide="phone" class="w-6 h-6 text-deep-burgundy mr-4 mt-1"></i>
+                            <div>
+                                <p class="font-semibold text-text-dark">Call Us</p>
+                                <a href="tel:+2348012345678" class="text-accent-gold hover:text-deep-burgundy">+234 801 234 5678</a>
+                                <p class="text-sm text-gray-500">Available 9am - 5pm WAT</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="text-xl font-semibold text-text-dark mb-4">Send Us a Message</h4>
+                    <form id="contact-form" class="bg-white p-6 rounded-lg shadow-md space-y-4">
+                        <div>
+                            <label for="contact-name" class="block text-sm font-medium text-gray-700">Your Name</label>
+                            <input type="text" id="contact-name" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-3 focus:ring-accent-gold focus:border-accent-gold">
+                        </div>
+                        <div>
+                            <label for="contact-email" class="block text-sm font-medium text-gray-700">Your Email</label>
+                            <input type="email" id="contact-email" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-3 focus:ring-accent-gold focus:border-accent-gold">
+                        </div>
+                        <div>
+                            <label for="contact-message" class="block text-sm font-medium text-gray-700">Message</label>
+                            <textarea id="contact-message" rows="4" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-3 focus:ring-accent-gold focus:border-accent-gold"></textarea>
+                        </div>
+                        <button type="submit" class="w-full py-3 bg-deep-burgundy text-white font-semibold rounded-md hover:bg-accent-gold transition duration-300">
+                            SUBMIT INQUIRY
+                        </button>
+                        <p id="contact-success" class="text-green-600 text-sm mt-2 hidden text-center">Thank you! Your message has been sent.</p>
+                    </form>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+
+    <footer class="bg-text-dark text-primary-beige py-12 mt-12">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+                <h4 class="text-xl font-bold tracking-widest text-accent-gold mb-4"><span class="brand-name" >Lara's Collection</span></h4>
+            </div>
+            <div>
+                <h4 class="font-semibold text-white mb-4">SHOP</h4>
+                <ul class="space-y-2 text-sm text-gray-400">
+                    <li><a href="shop.html" class="hover:text-accent-gold transition">New Arrivals</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-semibold text-white mb-4">CUSTOMER CARE</h4>
+                <ul class="space-y-2 text-sm text-gray-400">
+                    <li><a href="Help-&-Contact.html" class="hover:text-accent-gold transition">Help & Contact Us</a></li>
+                    <li><a href="Shipping-&-Returns.html" class="hover:text-accent-gold transition">Shipping & Returns</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-semibold text-white mb-4">FOLLOW US</h4>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-accent-gold transition"><i data-lucide="instagram" class="w-6 h-6"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-accent-gold transition"><i data-lucide="facebook" class="w-6 h-6"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="border-t border-gray-700 mt-8 pt-6 container mx-auto px-4 text-center text-xs text-gray-500">
+            &copy; 2024 Lara's Collection. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+        
+        // --- Shared UI Logic (Sidebar) ---
+        function toggleSidebar(type) {
+            let sidebar, backdrop;
+            if (type === 'utility') {
+                sidebar = document.getElementById('utility-sidebar');
+                backdrop = document.getElementById('utility-sidebar-backdrop');
+            } else if (type === 'mobile') {
+                sidebar = document.getElementById('mobile-menu');
+                backdrop = document.getElementById('mobile-menu-backdrop');
+            }
+            if (!sidebar || !backdrop) return;
+            const isOpen = sidebar.classList.contains('open');
+            if (isOpen) {
+                sidebar.classList.remove('open');
+                backdrop.classList.add('hidden');
+            } else {
+                sidebar.classList.add('open');
+                backdrop.classList.remove('hidden');
+            }
+        }
+
+        // --- FAQ Accordion Logic ---
+        document.querySelectorAll('.faq-toggle').forEach(button => {
+            button.addEventListener('click', () => {
+                const targetId = button.getAttribute('data-target');
+                const answer = document.getElementById(targetId);
+                const icon = button.querySelector('i[data-lucide]');
+
+                const isOpen = answer.classList.contains('open');
+
+                // Close all other open answers
+                document.querySelectorAll('.faq-answer.open').forEach(openAnswer => {
+                    if (openAnswer.id !== targetId) {
+                        openAnswer.classList.remove('open');
+                        openAnswer.previousElementSibling.querySelector('i[data-lucide]').style.transform = 'rotate(0deg)';
+                    }
+                });
+
+                // Toggle the clicked answer
+                if (isOpen) {
+                    answer.classList.remove('open');
+                    icon.style.transform = 'rotate(0deg)';
+                } else {
+                    answer.classList.add('open');
+                    icon.style.transform = 'rotate(180deg)';
+                }
+            });
+        });
+
+        // --- Contact Form Logic (Client-side simulation) ---
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const form = this;
+            const successMessage = document.getElementById('contact-success');
+            
+            // In a real application, you would send this data to a backend endpoint (e.g., Firebase Functions, Formspree, etc.)
+            console.log('Contact form submitted:', {
+                name: form.elements['contact-name'].value,
+                email: form.elements['contact-email'].value,
+                message: form.elements['contact-message'].value,
+            });
+            
+            // Simulate success feedback
+            form.reset();
+            successMessage.classList.remove('hidden');
+            
+            // Hide success message after 5 seconds
+            setTimeout(() => {
+                successMessage.classList.add('hidden');
+            }, 5000);
+        });
+
+        // Initializer
+        document.addEventListener('DOMContentLoaded', () => {
+            // Update cart count (copied from cart.html)
+            const cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
+            document.getElementById('cart-count').textContent = `(${cartItems.length})`;
+        });
+    </script>
+</body>
+</html>
