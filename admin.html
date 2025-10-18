@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Lara's Collection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sacramento&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+
+    <style>
+        .brand-name { font-family: 'Sacramento', cursive; }
+        /* Custom Styles for Admin Panel */
+        .admin-sidebar {
+            width: 256px; /* 64 units in Tailwind */
+            transition: transform 0.3s ease-in-out;
+        }
+        .main-content-area {
+            min-height: 100vh;
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .nav-item:hover {
+            background-color: #550000; /* Darker burgundy on hover */
+        }
+        .nav-item.active {
+            background-color: #C9A04B; /* Accent Gold */
+            color: #333333;
+            border-radius: 6px;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-beige': '#F9F7F4',
+                        'accent-gold': '#C9A04B',
+                        'deep-burgundy': '#8B0000',
+                        'text-dark': '#333333',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-sans bg-gray-100 text-text-dark">
+
+    <div class="flex">
+
+        <aside class="admin-sidebar bg-deep-burgundy text-white h-screen sticky top-0 flex-shrink-0 z-10">
+            <div class="p-6 border-b border-burgundy-700">
+                <h2 class="text-3xl font-bold tracking-widest text-accent-gold"><span class="brand-name">Lara's Admin</span></h2>
+            </div>
+            <nav class="p-4 space-y-2">
+                <a class="nav-item active" data-page="dashboard">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i> Dashboard
+                </a>
+                <a class="nav-item" data-page="products">
+                    <i data-lucide="shopping-bag" class="w-5 h-5 mr-3"></i> Product Management
+                </a>
+                <a class="nav-item" data-page="orders">
+                    <i data-lucide="receipt" class="w-5 h-5 mr-3"></i> Order Management
+                </a>
+                <a class="nav-item" data-page="customers">
+                    <i data-lucide="users" class="w-5 h-5 mr-3"></i> Customer Accounts
+                </a>
+                <a class="nav-item" data-page="cms">
+                    <i data-lucide="pen-tool" class="w-5 h-5 mr-3"></i> Content (CMS)
+                </a>
+                <a class="nav-item" data-page="settings">
+                    <i data-lucide="settings" class="w-5 h-5 mr-3"></i> Settings
+                </a>
+            </nav>
+
+            <div class="absolute bottom-0 p-4 w-full">
+                <button onclick="logout()" class="w-full text-left nav-item bg-deep-burgundy hover:bg-red-700 rounded-md">
+                    <i data-lucide="log-out" class="w-5 h-5 mr-3"></i> Log Out
+                </button>
+            </div>
+        </aside>
+
+        <div id="main-content-area" class="flex-grow p-8 main-content-area">
+            
+            <div id="page-dashboard" class="page-content">
+                <h1 class="text-3xl font-bold text-text-dark mb-8">Dashboard Overview</h1>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+                    <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-accent-gold">
+                        <p class="text-sm font-medium text-gray-500">Today's Revenue</p>
+                        <p class="text-3xl font-extrabold text-text-dark mt-1" id="kpi-revenue">N560,000</p>
+                        <p class="text-xs text-green-600 flex items-center mt-2"><i data-lucide="trending-up" class="w-4 h-4 mr-1"></i> +12% vs yesterday</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-deep-burgundy">
+                        <p class="text-sm font-medium text-gray-500">New Orders</p>
+                        <p class="text-3xl font-extrabold text-text-dark mt-1" id="kpi-orders">14</p>
+                        <p class="text-xs text-gray-500 mt-2">To be processed</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-gray-400">
+                        <p class="text-sm font-medium text-gray-500">Product Views</p>
+                        <p class="text-3xl font-extrabold text-text-dark mt-1" id="kpi-views">8,102</p>
+                        <p class="text-xs text-red-600 flex items-center mt-2"><i data-lucide="trending-down" class="w-4 h-4 mr-1"></i> -3% vs last week</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-blue-500">
+                        <p class="text-sm font-medium text-gray-500">Stock Alerts</p>
+                        <p class="text-3xl font-extrabold text-red-500 mt-1" id="kpi-stock">3</p>
+                        <p class="text-xs text-gray-500 mt-2">Items running low</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <h2 class="text-xl font-bold mb-4">Recent Orders</h2>
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Order ID</th>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr class="hover:bg-gray-50 cursor-pointer">
+                                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-text-dark">#LRC10245</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">Aisha Bello</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-deep-burgundy font-semibold">N105,000</td>
+                                <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Processing</span></td>
+                            </tr>
+                             <tr class="hover:bg-gray-50 cursor-pointer">
+                                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-text-dark">#LRC10244</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">Tunde Adebayo</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-deep-burgundy font-semibold">N45,500</td>
+                                <td class="px-4 py-3 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Shipped</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="mt-4 text-right">
+                        <a href="#" onclick="showPage('orders')" class="text-sm font-medium text-accent-gold hover:text-deep-burgundy transition">View All Orders &rarr;</a>
+                    </div>
+                </div>
+            </div>
+
+            <div id="page-products" class="page-content hidden">
+                <h1 class="text-3xl font-bold text-text-dark mb-8">Product Management</h1>
+
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-semibold">Current Inventory</h2>
+                    <button class="flex items-center bg-deep-burgundy text-white px-4 py-2 rounded-lg hover:bg-accent-gold transition" onclick="toggleAddProductForm()">
+                        <i data-lucide="plus" class="w-5 h-5 mr-2"></i> Add New Product
+                    </button>
+                </div>
+                
+                <div id="product-form-container" class="bg-white p-8 rounded-lg shadow-lg mb-8 hidden">
+                    <h3 class="text-2xl font-bold mb-6 text-accent-gold">Add/Edit Product Details</h3>
+                    <form id="product-form" class="space-y-6">
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="product-name" class="block text-sm font-medium text-gray-700">Product Name</label>
+                                <input type="text" id="product-name" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-3 focus:ring-accent-gold focus:border-accent-gold">
+                            </div>
+                            <div>
+                                <label for="product-sku" class="block text-sm font-medium text-gray-700">SKU / Unique ID</label>
+                                <input type="text" id="product-sku" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-3 bg-gray-50" readonly placeholder="Auto-Generated or Manual">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div>
+                                <label for="product-price" class="block text-sm font-medium text-gray-700">Price (NGN)</label>
+                                <input type="number" id="product-price" required step="0.01" min="0" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-3 focus:ring-accent-gold focus:border-accent-gold">
+                            </div>
+                            <div>
+                                <label for="product-stock" class="block text-sm font-medium text-gray-700">Stock Quantity</label>
+                                <input type="number" id="product-stock" required min="0" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-3 focus:ring-accent-gold focus:border-accent-gold">
+                            </div>
+                            <div>
+                                <label for="product-category" class="block text-sm font-medium text-gray-700">Category</label>
+                                <select id="product-category" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-3 focus:ring-accent-gold focus:border-accent-gold">
+                                    <option value="">Select Category</option>
+                                    <option value="Abayas">Abayas</option>
+                                    <option value="Perfumes">Perfume & Attar</option>
+                                    <option value="Jewelry">Jewelry & Accessories</option>
+                                    <option value="Footwear">Footwear</option>
+                                    <option value="New-Arrivals">New Arrivals</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="product-description" class="block text-sm font-medium text-gray-700">Product Description</label>
+                            <textarea id="product-description" rows="4" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-3 focus:ring-accent-gold focus:border-accent-gold"></textarea>
+                        </div>
+
+                        <div>
+                            <label for="product-images" class="block text-sm font-medium text-gray-700">Product Images (Upload)</label>
+                            <input type="file" id="product-images" multiple accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-beige file:text-deep-burgundy hover:file:bg-gray-200">
+                            <p class="text-xs text-gray-500 mt-1">Upload up to 4 high-resolution images.</p>
+                            <div id="image-preview" class="mt-4 grid grid-cols-4 gap-2"></div>
+                        </div>
+
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-700 mb-2">Product Variations</h4>
+                            <div id="variations-container" class="space-y-3 bg-gray-50 p-4 rounded-md">
+                                <p class="text-sm text-gray-500">Use this section to define different sizes, colors, or bottle volumes.</p>
+                            </div>
+                            <button type="button" onclick="addVariation()" class="mt-3 text-sm font-medium text-accent-gold hover:text-deep-burgundy flex items-center">
+                                <i data-lucide="plus-circle" class="w-4 h-4 mr-1"></i> Add Variation
+                            </button>
+                        </div>
+                        
+                        <div class="flex justify-end space-x-4 pt-4">
+                            <button type="button" onclick="toggleAddProductForm()" class="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100 transition">Cancel</button>
+                            <button type="submit" class="px-6 py-2 bg-deep-burgundy text-white rounded-md hover:bg-accent-gold transition">Save Product</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-lg overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Image</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stock</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
+                                <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="product-list-body" class="divide-y divide-gray-200">
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-4 whitespace-nowrap"><img src="https://placehold.co/50x65/C9A04B/333333?text=Abaya" alt="Product" class="w-12 h-16 object-cover rounded-md"></td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm font-medium">Elegant Gold-Lace Abaya</td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-700">Abayas</td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-green-600">35 In Stock</td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold">N85,000</td>
+                                <td class="px-4 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                                    <button class="text-blue-600 hover:text-blue-900" title="Edit"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                                    <button class="text-red-600 hover:text-red-900" title="Delete"><i data-lucide="trash" class="w-4 h-4"></i></button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-4 whitespace-nowrap"><img src="https://placehold.co/50x65/964B00/FFFFFF?text=Attar" alt="Product" class="w-12 h-16 object-cover rounded-md"></td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm font-medium">Royal Mukhallat Oud (12ml)</td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-700">Perfumes</td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-red-600">5 Low Stock</td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold">N35,000</td>
+                                <td class="px-4 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                                    <button class="text-blue-600 hover:text-blue-900" title="Edit"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                                    <button class="text-red-600 hover:text-red-900" title="Delete"><i data-lucide="trash" class="w-4 h-4"></i></button>
+                                </td>
+                            </tr>
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="page-orders" class="page-content hidden">
+                <h1 class="text-3xl font-bold text-text-dark mb-8">Order Management</h1>
+                <div class="bg-white p-6 rounded-lg shadow-lg overflow-x-auto">
+                    <h2 class="text-xl font-semibold mb-4">All Orders (Newest First)</h2>
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr class="hover:bg-gray-50 cursor-pointer">
+                                <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-deep-burgundy">#LRC10246</td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-700">2025-10-18</td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-700">Fatima Kalu</td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold">N210,000</td>
+                                <td class="px-4 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Unpaid</span></td>
+                                <td class="px-4 py-4 whitespace-nowrap text-right text-sm space-x-2">
+                                    <button class="text-blue-600 hover:text-blue-900" title="View Details"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 cursor-pointer">
+                                <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-deep-burgundy">#LRC10245</td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-700">2025-10-18</td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-700">Aisha Bello</td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold">N105,000</td>
+                                <td class="px-4 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Processing</span></td>
+                                <td class="px-4 py-4 whitespace-nowrap text-right text-sm space-x-2">
+                                    <button class="text-blue-600 hover:text-blue-900" title="View Details"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 cursor-pointer">
+                                <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-deep-burgundy">#LRC10244</td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-700">2025-10-17</td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-700">Tunde Adebayo</td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold">N45,500</td>
+                                <td class="px-4 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Shipped</span></td>
+                                <td class="px-4 py-4 whitespace-nowrap text-right text-sm space-x-2">
+                                    <button class="text-blue-600 hover:text-blue-900" title="View Details"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div id="page-customers" class="page-content hidden">
+                <h1 class="text-3xl font-bold text-text-dark mb-8">Customer Accounts</h1>
+                <div class="bg-white p-6 rounded-lg shadow-lg overflow-x-auto">
+                    <h2 class="text-xl font-semibold mb-4">Registered Customers</h2>
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer Name</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Orders</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Spent</th>
+                                <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Joined</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr class="hover:bg-gray-50 cursor-pointer">
+                                <td class="px-4 py-4 whitespace-nowrap text-sm font-medium">Aisha Bello</td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-700">aisha@example.com</td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-700">5</td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold">N380,000</td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">2024-03-10</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 cursor-pointer">
+                                <td class="px-4 py-4 whitespace-nowrap text-sm font-medium">Tunde Adebayo</td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-700">tunde@mail.com</td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-700">2</td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm font-semibold">N115,500</td>
+                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">2025-08-01</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="page-cms" class="page-content hidden">
+                <h1 class="text-3xl font-bold text-text-dark mb-8">Content Management (CMS)</h1>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <h2 class="text-xl font-semibold text-accent-gold mb-4 flex items-center"><i data-lucide="image" class="w-5 h-5 mr-2"></i> Homepage Hero Banner</h2>
+                        <form class="space-y-4">
+                            <div>
+                                <label for="banner-text" class="block text-sm font-medium text-gray-700">Banner Text</label>
+                                <input type="text" id="banner-text" value="The New Collection Has Arrived" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-3">
+                            </div>
+                            <div>
+                                <label for="banner-image" class="block text-sm font-medium text-gray-700">Upload New Image</label>
+                                <input type="file" id="banner-image" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-beige file:text-deep-burgundy">
+                            </div>
+                            <button type="submit" class="w-full py-2 bg-deep-burgundy text-white rounded-md hover:bg-accent-gold transition">Update Banner</button>
+                        </form>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <h2 class="text-xl font-semibold text-accent-gold mb-4 flex items-center"><i data-lucide="file-text" class="w-5 h-5 mr-2"></i> Policy Documents</h2>
+                        <p class="text-sm text-gray-600 mb-4">Quickly edit key text on static pages.</p>
+                        <form class="space-y-4">
+                            <div>
+                                <label for="return-policy" class="block text-sm font-medium text-gray-700">Returns Policy Summary</label>
+                                <textarea id="return-policy" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-3">14-day return window for unworn items...</textarea>
+                            </div>
+                            <div>
+                                <label for="shipping-policy" class="block text-sm font-medium text-gray-700">Lagos Shipping Rate (NGN)</label>
+                                <input type="number" id="shipping-policy" value="3500" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-3">
+                            </div>
+                            <button type="submit" class="w-full py-2 bg-deep-burgundy text-white rounded-md hover:bg-accent-gold transition">Save Policies</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="page-settings" class="page-content hidden">
+                <h1 class="text-3xl font-bold text-text-dark mb-8">Settings</h1>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <h2 class="text-xl font-semibold text-accent-gold mb-4 flex items-center"><i data-lucide="lock" class="w-5 h-5 mr-2"></i> Account Security</h2>
+                        <form class="space-y-4">
+                            <div>
+                                <label for="current-password" class="block text-sm font-medium text-gray-700">Current Password</label>
+                                <input type="password" id="current-password" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-3">
+                            </div>
+                            <div>
+                                <label for="new-password" class="block text-sm font-medium text-gray-700">New Password</label>
+                                <input type="password" id="new-password" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-3">
+                            </div>
+                            <button type="submit" class="w-full py-2 bg-deep-burgundy text-white rounded-md hover:bg-accent-gold transition">Change Password</button>
+                        </form>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <h2 class="text-xl font-semibold text-accent-gold mb-4 flex items-center"><i data-lucide="globe" class="w-5 h-5 mr-2"></i> Site Configuration</h2>
+                        <form class="space-y-4">
+                            <div>
+                                <label for="default-currency" class="block text-sm font-medium text-gray-700">Default Currency</label>
+                                <select id="default-currency" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-3">
+                                    <option value="NGN">Nigerian Naira (NGN)</option>
+                                    <option value="USD">US Dollar (USD)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="site-status" class="block text-sm font-medium text-gray-700">Store Status</label>
+                                <select id="site-status" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-3">
+                                    <option value="open">Open for Business</option>
+                                    <option value="maintenance">Maintenance Mode</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="w-full py-2 bg-deep-burgundy text-white rounded-md hover:bg-accent-gold transition">Save Settings</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        lucide.createIcons();
+
+        // --- PAGE SWITCHING LOGIC ---
+        function showPage(pageId) {
+            // Hide all content pages
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.add('hidden');
+            });
+
+            // Deactivate all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Show the target page
+            const targetPage = document.getElementById(`page-${pageId}`);
+            if (targetPage) {
+                targetPage.classList.remove('hidden');
+            }
+
+            // Activate the corresponding nav item
+            const activeNavItem = document.querySelector(`.nav-item[data-page="${pageId}"]`);
+            if (activeNavItem) {
+                activeNavItem.classList.add('active');
+            }
+        }
+
+        // Attach listeners to sidebar items
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const pageId = item.getAttribute('data-page');
+                showPage(pageId);
+            });
+        });
+
+        // --- PRODUCT MANAGEMENT LOGIC ---
+        function toggleAddProductForm() {
+            const formContainer = document.getElementById('product-form-container');
+            formContainer.classList.toggle('hidden');
+        }
+
+        function addVariation() {
+            const container = document.getElementById('variations-container');
+            const index = container.children.length; // Simple index for unique IDs
+
+            const variationHTML = `
+                <div class="variation-item flex space-x-3 items-center p-3 border border-gray-200 rounded-md">
+                    <div class="flex-grow">
+                        <label class="block text-xs font-medium text-gray-500">Option Name (e.g., Color, Size, Volume)</label>
+                        <input type="text" placeholder="e.g. Red, Medium, 50ml" name="option-name-${index}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 text-sm">
+                    </div>
+                    <div class="flex-grow">
+                        <label class="block text-xs font-medium text-gray-500">SKU Suffix</label>
+                        <input type="text" placeholder="e.g. -R, -M, -50" name="sku-suffix-${index}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 text-sm">
+                    </div>
+                    <div class="flex-grow-0 w-24">
+                        <label class="block text-xs font-medium text-gray-500">Price Adjustment</label>
+                        <input type="number" placeholder="+0" name="price-adj-${index}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 text-sm">
+                    </div>
+                    <button type="button" onclick="this.closest('.variation-item').remove()" class="text-red-500 hover:text-red-700 p-2">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            `;
+            // Remove the initial placeholder text if it exists
+            if (container.querySelector('p')) {
+                container.innerHTML = '';
+            }
+            container.insertAdjacentHTML('beforeend', variationHTML);
+            lucide.createIcons(); // Re-render Lucide icons for new elements
+        }
+
+        document.getElementById('product-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Product submission simulated. In a real application, data would be sent to a backend API (e.g., Firebase, Django, or PHP).');
+            toggleAddProductForm(); // Hide form on successful simulation
+        });
+
+
+        // --- LOGOUT SIMULATION ---
+        function logout() {
+            const confirmLogout = confirm("Are you sure you want to log out?");
+            if (confirmLogout) {
+                // In a real app, this would clear session/cookies and redirect to a login page.
+                alert("Logged out successfully! Redirecting...");
+                window.location.href = "index.html"; // Redirect to homepage or login
+            }
+        }
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+             // Ensure the dashboard page is active on load
+            showPage('dashboard'); 
+        });
+    </script>
+</body>
+  </html>
