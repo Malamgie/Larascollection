@@ -553,30 +553,7 @@ shopTrigger.addEventListener('mouseleave', () => shopMenu.classList.remove('visi
             }
         });
         
-document.addEventListener("DOMContentLoaded", () => {
-  const carousels = document.querySelectorAll("[data-carousel='true']");
-  carousels.forEach(carousel => {
-    let index = 0;
-    const images = carousel.querySelectorAll(".carousel-image");
-    if (!images.length) return;
 
-    setInterval(() => {
-      images[index].classList.remove("active");
-      index = (index + 1) % images.length;
-      images[index].classList.add("active");
-    }, 4000); // 4 seconds per slide
-  });
-
-  lucide.createIcons(); // activate icons
-});  
-        
-function toggleSidebar(type) {
-  const sidebar = document.getElementById(`${type}-sidebar`);
-  const backdrop = document.getElementById(`${type}-menu-backdrop`) || document.getElementById(`${type}-sidebar-backdrop`);
-  
-  sidebar.classList.toggle("open");
-  backdrop.classList.toggle("hidden");
-}
             
     </script>
 </body>
