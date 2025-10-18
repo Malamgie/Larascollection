@@ -2,9 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="description" content="Lara’s Collection offers elegant Ankara, Abayas, jewelry, and luxury perfumes handcrafted with style and grace.">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lara's Collections</title>
+    <title>Lara's Collection | Elegant Ankara, Abayas, and Luxury Beauty</title>
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Load Lucide Icons -->
@@ -78,7 +77,6 @@ tailwind.config = {
     }
   }
 }
-        
     </script>
 </head>
 <body class="font-sans bg-primary-beige text-text-dark antialiased">
@@ -407,7 +405,7 @@ tailwind.config = {
 
         <!-- Copyright -->
         <div class="border-t border-gray-700 mt-8 pt-6 container mx-auto px-4 text-center text-xs text-gray-500">
-            &copy; 2025 Lara's Collection. All rights reserved.
+            &copy; 2024 Lara's Collection. All rights reserved.
         </div>
     </footer>
 
@@ -416,13 +414,6 @@ tailwind.config = {
         7. JAVASCRIPT LOGIC
         ========================================
     -->
-    <script>
-const shopTrigger = document.getElementById('shop-trigger');
-const shopMenu = document.getElementById('desktop-shop-menu');
-
-shopTrigger.addEventListener('mouseenter', () => shopMenu.classList.add('visible'));
-shopTrigger.addEventListener('mouseleave', () => shopMenu.classList.remove('visible'));
-    </script>
     <script>
         lucide.createIcons();
 
@@ -552,27 +543,6 @@ shopTrigger.addEventListener('mouseleave', () => shopMenu.classList.remove('visi
                 document.getElementById('mobile-menu-backdrop')?.classList.add('hidden');
             }
         });
-        
-document.addEventListener("DOMContentLoaded", () => {
-  const carousels = document.querySelectorAll("[data-carousel='true']");
-  carousels.forEach(carousel => {
-    let index = 0;
-    const images = carousel.querySelectorAll(".carousel-image");
-    if (!images.length) return;
-
-    setInterval(() => {
-      images[index].classList.remove("active");
-      index = (index + 1) % images.length;
-      images[index].classList.add("active");
-    }, 4000); // 4 seconds per slide
-  });
-
-  lucide.createIcons(); // activate icons
-});
-    
-        
-
-            
     </script>
 </body>
 </html>
