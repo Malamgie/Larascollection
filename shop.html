@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Products | Lara's Collection Shop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sacramento&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-storage.js"></script>
+    <script>
+        // Your Firebase config goes here
+        const firebaseConfig = {
+          // apiKey: "...",
+          // authDomain: "...",
+          // projectId: "...",
+          // storageBucket: "...",
+          // messagingSenderId: "...",
+          // appId: "..."
+        };
+        // Initialize Firebase
+        // firebase.initializeApp(firebaseConfig);
+        // const db = firebase.firestore();
+    </script>
+
+    <style>
+        .brand-name {
+            font-family: 'Sacramento', cursive;
+        }
+
+        /* Dropdown/Sidebar Styles (Copied from index.html) */
+        .desktop-shop-menu {
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .desktop-shop-menu.visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        #utility-sidebar {
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(100%);
+        }
+        #utility-sidebar.open {
+            transform: translateX(0);
+        }
+        #mobile-menu {
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(-100%);
+        }
+        #mobile-menu.open {
+            transform: translateX(0);
+        }
+
+        /* NEW: Custom styles for the product card hover effect */
+        .product-card-overlay {
+            opacity: 0;
+            transform: translateY(100%);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .group:hover .product-card-overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-beige': '#F9F7F4',
+                        'accent-gold': '#C9A04B',
+                        'deep-burgundy': '#8B0000',
+                        'text-dark': '#333333',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-sans bg-primary-beige text-text-dark antialiased">
+
+    <div id="utility-sidebar-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" onclick="toggleSidebar('utility')"></div>
+    <div id="utility-sidebar" class="fixed top-0 right-0 h-full w-64 bg-white shadow-xl z-50 p-6">
+        <div class="flex justify-end mb-8">
+            <button onclick="toggleSidebar('utility')" class="text-xl text-text-dark hover:text-deep-burgundy"><i data-lucide="x"></i></button>
+        </div>
+        <nav class="space-y-6">
+            <a href="account.html" class="block text-lg hover:text-accent-gold">My Account</a>
+            <a href="account.html" class="block text-lg hover:text-accent-gold">Login / Register</a>
+            </nav>
+    </div>
+    
+    <div id="mobile-menu-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" onclick="toggleSidebar('mobile')"></div>
+    <div id="mobile-menu" class="fixed top-0 left-0 h-full w-64 bg-white shadow-xl z-50 p-6">
+        <div class="flex justify-end mb-8">
+            <button onclick="toggleSidebar('mobile')" class="text-xl text-text-dark hover:text-deep-burgundy"><i data-lucide="x"></i></button>
+        </div>
+        <nav class="space-y-4">
+            <a href="index.html" class="block text-lg font-medium hover:text-accent-gold">Home</a>
+            <div class="border-t border-gray-100 pt-4">
+                <span class="block text-lg font-medium text-text-dark mb-2">SHOP CATEGORIES</span>
+                <ul class="pl-4 space-y-1">
+                    <li class="text-gray-700 hover:text-accent-gold cursor-pointer"><a href="shop.html?category=Ankara">Ankara</a></li>
+                    <li class="text-gray-700 hover:text-accent-gold cursor-pointer"><a href="shop.html?category=Abayas">Abayas</a></li>
+                    <li class="text-gray-700 hover:text-accent-gold cursor-pointer"><a href="shop.html?category=Skirts-Tops">Skirts & Tops</a></li>
+                    <li class="text-gray-700 hover:text-accent-gold cursor-pointer"><a href="shop.html?category=Sandals-Flats">Sandals & Flats</a></li>
+                    <li class="text-gray-700 hover:text-accent-gold cursor-pointer"><a href="shop.html?category=Heels">Heels</a></li>
+                    <li class="text-gray-700 hover:text-accent-gold cursor-pointer"><a href="shop.html?category=Jewelry">Jewelry & Sets</a></li>
+                    <li class="text-gray-700 hover:text-accent-gold cursor-pointer"><a href="shop.html?category=Perfumes">Traditional Perfumes</a></li>
+                </ul>
+            </div>
+            <a href="#" class="block text-lg font-medium hover:text-accent-gold">Contact Us</a>
+        </nav>
+    </div>
+
+    <header class="sticky top-0 bg-white bg-opacity-95 backdrop-blur-sm shadow-sm z-30">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 h-20 flex justify-between items-center">
+            <h1 class="text-2xl font-bold tracking-widest text-text-dark"><span class="brand-name" >Lara's Collection</span></h1>
+
+            <nav class="hidden lg:flex items-center space-x-10 text-lg font-medium">
+                <a href="index.html" class="text-text-dark hover:text-accent-gold transition duration-150">Home</a>
+                
+                <div id="shop-trigger" class="relative group">
+                    <button class="text-text-dark flex items-center hover:text-accent-gold transition duration-150">
+                        Shop <i data-lucide="chevron-down" class="w-4 h-4 ml-1"></i>
+                    </button>
+                    
+                    <div id="desktop-shop-menu" class="desktop-shop-menu absolute left-0 mt-5 w-[700px] shadow-2xl bg-white border border-gray-100 rounded-lg p-6 pt-8">
+                        <div class="grid grid-cols-4 gap-8">
+                            <div>
+                                <h4 class="font-bold text-deep-burgundy mb-3 uppercase tracking-wider">Clothing</h4>
+                                <ul class="space-y-2 text-sm">
+                                    <li><a href="shop.html?category=Ankara" class="hover:text-accent-gold transition duration-100">Ankara (New!)</a></li>
+                                    <li><a href="shop.html?category=Abayas" class="hover:text-accent-gold transition duration-100">Abayas</a></li>
+                                    <li><a href="shop.html?category=Skirts-Tops" class="hover:text-accent-gold transition duration-100">Skirts & Tops</a></li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-deep-burgundy mb-3 uppercase tracking-wider">Footwear</h4>
+                                <ul class="space-y-2 text-sm">
+                                    <li><a href="shop.html?category=Sandals-Flats" class="hover:text-accent-gold transition duration-100">Sandals & Flats</a></li>
+                                    <li><a href="shop.html?category=Heels" class="hover:text-accent-gold transition duration-100">Heels</a></li>
+                                    <li><a href="shop.html?category=Traditional-Leather" class="hover:text-accent-gold transition duration-100">Traditional Leather</a></li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-deep-burgundy mb-3 uppercase tracking-wider">Accessories</h4>
+                                <ul class="space-y-2 text-sm">
+                                    <li><a href="shop.html?category=Jewelry" class="hover:text-accent-gold transition duration-100">Jewelry & Sets</a></li>
+                                    <li><a href="shop.html?category=Handbags" class="hover:text-accent-gold transition duration-100">Handbags & Clutches</a></li>
+                                    <li><h4 class="font-bold text-deep-burgundy mt-4 mb-3 uppercase tracking-wider">Beauty</h4></li>
+                                    <li><a href="shop.html?category=Perfumes" class="hover:text-accent-gold transition duration-100">Traditional Perfumes</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-span-1 bg-primary-beige p-4 rounded-lg flex flex-col justify-center items-center">
+                                <p class="text-xl font-semibold text-deep-burgundy mb-2">Shop All</p>
+                                <a href="shop.html" class="inline-block text-accent-gold border-b border-accent-gold hover:text-deep-burgundy transition">View Full Collection &rarr;</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <a href="#" class="text-text-dark hover:text-accent-gold transition duration-150">Contact Us</a>
+            </nav>
+
+            <div class="flex items-center space-x-4">
+                <a href="cart.html" class="flex items-center text-text-dark hover:text-accent-gold transition duration-150">
+                    <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+                    <span id="cart-count" class="ml-1 text-sm">(0)</span>
+                </a>
+
+                <button onclick="toggleSidebar('utility')" class="text-text-dark hover:text-accent-gold transition duration-150">
+                   <i data-lucide="user" class="w-6 h-6"></i>
+                </button>
+                
+                <button onclick="toggleSidebar('mobile')" class="lg:hidden text-text-dark hover:text-accent-gold transition duration-150">
+                    <i data-lucide="align-right" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h2 id="collection-title" class="text-4xl font-extrabold text-text-dark mb-4">All Collections</h2>
+        <p class="text-gray-600 mb-8">Browse the full range of Lara's finest selections.</p>
+        
+        <div class="flex flex-col lg:flex-row gap-10">
+            <aside class="w-full lg:w-1/4 bg-white p-6 rounded-lg shadow-sm h-fit sticky top-28">
+                <h3 class="text-lg font-bold text-deep-burgundy mb-6 border-b pb-2">Filter Products</h3>
+                
+                <div class="mb-6">
+                    <h4 class="font-semibold text-text-dark mb-3">Category</h4>
+                    <div class="space-y-2 text-sm text-gray-700" id="category-filters">
+                        <a href="shop.html?category=all" class="block hover:text-accent-gold font-medium">All (64)</a>
+                        <a href="shop.html?category=Ankara" class="block hover:text-accent-gold">Ankara (12)</a>
+                        <a href="shop.html?category=Abayas" class="block hover:text-accent-gold">Abayas (8)</a>
+                        <a href="shop.html?category=Jewelry" class="block hover:text-accent-gold">Jewelry (15)</a>
+                        <a href="shop.html?category=Heels" class="block hover:text-accent-gold">Heels (5)</a>
+                        <a href="shop.html?category=Perfumes" class="block hover:text-accent-gold">Perfumes (9)</a>
+                    </div>
+                </div>
+
+                <div class="mb-6 border-t pt-4">
+                    <h4 class="font-semibold text-text-dark mb-3">Price Range</h4>
+                    <input type="range" min="10000" max="150000" value="75000" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    <p class="text-sm text-gray-500 mt-1">Under: N<span id="price-display">75,000</span></p>
+                </div>
+            </aside>
+
+            <main class="w-full lg:w-3/4">
+                <div class="flex justify-between items-center mb-6">
+                    <p class="text-sm text-gray-500"><span id="product-count">32</span> items found</p>
+                    <div class="flex items-center space-x-2">
+                        <label for="sort" class="text-sm font-medium">Sort By:</label>
+                        <select id="sort" class="border rounded-md p-1 text-sm bg-white">
+                            <option value="newest">Newest</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                    
+                    <div class="group relative">
+                        <a href="product-detail.html?id=P001" class="block">
+                            <div class="aspect-w-1 aspect-h-1 aspect-square w-full bg-gray-100 overflow-hidden rounded-lg">
+                                 <img 
+                                    src="assets/product-placeholder-1.jpg" 
+                                    alt="Product 1 Name" 
+                                    class="w-full h-full object-cover group-hover:opacity-75 transition duration-300"
+                                    onerror="this.onerror=null;this.src='https://placehold.co/500x500/D2B48C/333333?text=Ankara+Dress';"
+                                >
+                            </div>
+                            
+                            <div class="mt-3 text-center">
+                                <h3 class="text-sm text-text-dark font-medium truncate">
+                                    Luxury Ankara Print Set
+                                </h3>
+                                <p class="mt-1 text-base font-semibold text-deep-burgundy">
+                                    N35,000
+                                </p>
+                            </div>
+                        </a>
+                        
+                        <div class="product-card-overlay absolute inset-x-0 bottom-[3.5rem] flex flex-col items-center">
+                            <button class="w-11/12 py-2 text-sm bg-accent-gold text-white font-medium hover:bg-deep-burgundy transition duration-200 rounded-b-lg">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="group relative">
+                        <a href="product-detail.html?id=P002" class="block">
+                            <div class="aspect-w-1 aspect-h-1 aspect-square w-full bg-gray-100 overflow-hidden rounded-lg">
+                                <img 
+                                    src="assets/product-placeholder-2.jpg" 
+                                    alt="Product 2 Name" 
+                                    class="w-full h-full object-cover group-hover:opacity-75 transition duration-300"
+                                    onerror="this.onerror=null;this.src='https://placehold.co/500x500/333333/C9A04B?text=Elegant+Abaya';"
+                                >
+                            </div>
+                            <div class="mt-3 text-center">
+                                <h3 class="text-sm text-text-dark font-medium truncate">
+                                    Classic Velvet Abaya
+                                </h3>
+                                <p class="mt-1 text-base font-semibold text-deep-burgundy">
+                                    N48,000
+                                </p>
+                            </div>
+                        </a>
+                        <div class="product-card-overlay absolute inset-x-0 bottom-[3.5rem] flex flex-col items-center">
+                            <button class="w-11/12 py-2 text-sm bg-accent-gold text-white font-medium hover:bg-deep-burgundy transition duration-200 rounded-b-lg">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="group relative">
+                        <a href="product-detail.html?id=P003" class="block">
+                            <div class="aspect-w-1 aspect-h-1 aspect-square w-full bg-gray-100 overflow-hidden rounded-lg">
+                                <img 
+                                    src="assets/product-placeholder-3.jpg" 
+                                    alt="Product 3 Name" 
+                                    class="w-full h-full object-cover group-hover:opacity-75 transition duration-300"
+                                    onerror="this.onerror=null;this.src='https://placehold.co/500x500/8B0000/F9F7F4?text=Gold+Jewelry';"
+                                >
+                            </div>
+                            <div class="mt-3 text-center">
+                                <h3 class="text-sm text-text-dark font-medium truncate">
+                                    24K Gold Plated Jewelry Set
+                                </h3>
+                                <p class="mt-1 text-base font-semibold text-deep-burgundy">
+                                    N12,500
+                                </p>
+                            </div>
+                        </a>
+                        <div class="product-card-overlay absolute inset-x-0 bottom-[3.5rem] flex flex-col items-center">
+                            <button class="w-11/12 py-2 text-sm bg-accent-gold text-white font-medium hover:bg-deep-burgundy transition duration-200 rounded-b-lg">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="group relative">
+                        <a href="product-detail.html?id=P004" class="block">
+                            <div class="aspect-w-1 aspect-h-1 aspect-square w-full bg-gray-100 overflow-hidden rounded-lg">
+                                <img 
+                                    src="assets/product-placeholder-4.jpg" 
+                                    alt="Product 4 Name" 
+                                    class="w-full h-full object-cover group-hover:opacity-75 transition duration-300"
+                                    onerror="this.onerror=null;this.src='https://placehold.co/500x500/C9A04B/333333?text=Sandal+Flats';"
+                                >
+                            </div>
+                            <div class="mt-3 text-center">
+                                <h3 class="text-sm text-text-dark font-medium truncate">
+                                    Handmade Leather Sandals
+                                </h3>
+                                <p class="mt-1 text-base font-semibold text-deep-burgundy">
+                                    N18,000
+                                </p>
+                            </div>
+                        </a>
+                        <div class="product-card-overlay absolute inset-x-0 bottom-[3.5rem] flex flex-col items-center">
+                            <button class="w-11/12 py-2 text-sm bg-accent-gold text-white font-medium hover:bg-deep-burgundy transition duration-200 rounded-b-lg">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                    </div>
+
+                <div class="text-center mt-12">
+                     <button class="border-2 border-deep-burgundy text-deep-burgundy font-semibold py-3 px-8 rounded-lg hover:bg-deep-burgundy hover:text-white transition duration-300">
+                        LOAD MORE PRODUCTS
+                    </button>
+                </div>
+            </main>
+        </div>
+    </main>
+
+
+    <footer class="bg-text-dark text-primary-beige py-12 mt-12">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+                <h4 class="text-xl font-bold tracking-widest text-accent-gold mb-4"><span class="brand-name" >Lara's Collection</span></h4>
+                <p class="text-sm text-gray-400 mb-4">
+                    Specializing in premium Ankara, Abayas, luxury accessories, and traditional beauty products.
+                </p>
+            </div>
+            <div>
+                <h4 class="font-semibold text-white mb-4">SHOP</h4>
+                <ul class="space-y-2 text-sm text-gray-400">
+                    <li><a href="shop.html" class="hover:text-accent-gold transition">New Arrivals</a></li>
+                    <li><a href="shop.html?category=Abayas" class="hover:text-accent-gold transition">Abaya Lookbook</a></li>
+                    <li><a href="shop.html?category=Perfumes" class="hover:text-accent-gold transition">Perfume & Attar</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-semibold text-white mb-4">CUSTOMER CARE</h4>
+                <ul class="space-y-2 text-sm text-gray-400">
+                    <li><a href="#" class="hover:text-accent-gold transition">Help & Contact Us</a></li>
+                    <li><a href="#" class="hover:text-accent-gold transition">Shipping Policy</a></li>
+                    <li><a href="#" class="hover:text-accent-gold transition">Returns & Exchange</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-semibold text-white mb-4">FOLLOW US</h4>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-accent-gold transition"><i data-lucide="instagram" class="w-6 h-6"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-accent-gold transition"><i data-lucide="facebook" class="w-6 h-6"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-accent-gold transition"><i data-lucide="twitter" class="w-6 h-6"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="border-t border-gray-700 mt-8 pt-6 container mx-auto px-4 text-center text-xs text-gray-500">
+            &copy; 2024 Lara's Collection. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+        
+        // Function to toggle utility/mobile sidebars (Copied from index.html)
+        function toggleSidebar(type) {
+            let sidebar, backdrop;
+            if (type === 'utility') {
+                sidebar = document.getElementById('utility-sidebar');
+                backdrop = document.getElementById('utility-sidebar-backdrop');
+            } else if (type === 'mobile') {
+                sidebar = document.getElementById('mobile-menu');
+                backdrop = document.getElementById('mobile-menu-backdrop');
+            }
+            if (!sidebar || !backdrop) return;
+            const isOpen = sidebar.classList.contains('open');
+            if (isOpen) {
+                sidebar.classList.remove('open');
+                backdrop.classList.add('hidden');
+            } else {
+                sidebar.classList.add('open');
+                backdrop.classList.remove('hidden');
+            }
+        }
+
+        // Logic to update the SHOP category dropdown on hover (Copied from index.html)
+        const shopTrigger = document.getElementById('shop-trigger');
+        const desktopMenu = document.getElementById('desktop-shop-menu');
+        if (shopTrigger) {
+            shopTrigger.addEventListener('mouseenter', () => desktopMenu.classList.add('visible'));
+            shopTrigger.addEventListener('mouseleave', () => desktopMenu.classList.remove('visible'));
+        }
+
+        // --- CORE SHOP PAGE LOGIC ---
+        
+        // 1. Get the category from the URL query parameter (e.g., ?category=Abayas)
+        function getCategoryFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('category');
+        }
+
+        // 2. Update the page title and fetch the data
+        function loadProducts() {
+            const category = getCategoryFromURL();
+            const titleElement = document.getElementById('collection-title');
+
+            if (category && category !== 'all') {
+                // Decode URL for display (e.g., Skirts-Tops -> Skirts & Tops)
+                const displayCategory = category.replace(/-/g, ' & ');
+                titleElement.textContent = displayCategory + ' Collection';
+                
+                // *** FIREBASE ACTION: You would call a Firestore query here:
+                // db.collection("products").where("category", "==", category).get().then(renderProducts);
+                
+                console.log(`Fetching products for category: ${category}`);
+
+            } else {
+                titleElement.textContent = 'All Collections';
+                // *** FIREBASE ACTION: Fetch all products:
+                // db.collection("products").get().then(renderProducts);
+
+                console.log('Fetching all products');
+            }
+
+            // TEMP: Highlight the active filter link
+            document.querySelectorAll('#category-filters a').forEach(link => {
+                link.classList.remove('font-bold', 'text-deep-burgundy');
+                if (link.href.includes(`category=${category}`)) {
+                     link.classList.add('font-bold', 'text-deep-burgundy');
+                } else if (!category && link.href.includes('category=all')) {
+                    link.classList.add('font-bold', 'text-deep-burgundy');
+                }
+            });
+            
+            // In a real app, renderProducts(data) would loop through Firebase data
+            // and build the HTML for the product cards in the #product-grid.
+        }
+
+        // 3. Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProducts();
+            // A simple placeholder to show cart count (Actual logic needed for cart.html)
+            const cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
+            document.getElementById('cart-count').textContent = `(${cartItems.length})`;
+        });
+
+    </script>
+</body>
+</html>

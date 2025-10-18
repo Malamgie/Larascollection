@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Name | Lara's Collection</title> 
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sacramento&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+    <script>
+        // Your Firebase config goes here
+        // firebase.initializeApp(firebaseConfig);
+        // const db = firebase.firestore();
+    </script>
+
+    <style>
+        .brand-name {
+            font-family: 'Sacramento', cursive;
+        }
+        /* Styles copied from shop.html/index.html */
+        .desktop-shop-menu {
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .desktop-shop-menu.visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        #utility-sidebar {
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(100%);
+        }
+        #utility-sidebar.open {
+            transform: translateX(0);
+        }
+        #mobile-menu {
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(-100%);
+        }
+        #mobile-menu.open {
+            transform: translateX(0);
+        }
+
+        /* NEW: Styles for image gallery thumbnail border */
+        .thumbnail.active {
+            border: 3px solid #C9A04B; /* accent-gold */
+            opacity: 1;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-beige': '#F9F7F4',
+                        'accent-gold': '#C9A04B',
+                        'deep-burgundy': '#8B0000',
+                        'text-dark': '#333333',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-sans bg-primary-beige text-text-dark antialiased">
+
+    <div id="utility-sidebar-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" onclick="toggleSidebar('utility')"></div>
+    <div id="utility-sidebar" class="fixed top-0 right-0 h-full w-64 bg-white shadow-xl z-50 p-6">
+        <div class="flex justify-end mb-8">
+            <button onclick="toggleSidebar('utility')" class="text-xl text-text-dark hover:text-deep-burgundy"><i data-lucide="x"></i></button>
+        </div>
+        <nav class="space-y-6">
+            <a href="account.html" class="block text-lg hover:text-accent-gold">My Account</a>
+            <a href="account.html" class="block text-lg hover:text-accent-gold">Login / Register</a>
+        </nav>
+    </div>
+    
+    <div id="mobile-menu-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" onclick="toggleSidebar('mobile')"></div>
+    <div id="mobile-menu" class="fixed top-0 left-0 h-full w-64 bg-white shadow-xl z-50 p-6">
+        <div class="flex justify-end mb-8">
+            <button onclick="toggleSidebar('mobile')" class="text-xl text-text-dark hover:text-deep-burgundy"><i data-lucide="x"></i></button>
+        </div>
+        <nav class="space-y-4">
+            <a href="index.html" class="block text-lg font-medium hover:text-accent-gold">Home</a>
+            <div class="border-t border-gray-100 pt-4">
+                <span class="block text-lg font-medium text-text-dark mb-2">SHOP CATEGORIES</span>
+                <ul class="pl-4 space-y-1">
+                    <li class="text-gray-700 hover:text-accent-gold cursor-pointer"><a href="shop.html?category=Ankara">Ankara</a></li>
+                    <li class="text-gray-700 hover:text-accent-gold cursor-pointer"><a href="shop.html?category=Abayas">Abayas</a></li>
+                    </ul>
+            </div>
+            <a href="#" class="block text-lg font-medium hover:text-accent-gold">Contact Us</a>
+        </nav>
+    </div>
+
+    <header class="sticky top-0 bg-white bg-opacity-95 backdrop-blur-sm shadow-sm z-30">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 h-20 flex justify-between items-center">
+            <h1 class="text-2xl font-bold tracking-widest text-text-dark"><span class="brand-name" >Lara's Collection</span></h1>
+
+            <nav class="hidden lg:flex items-center space-x-10 text-lg font-medium">
+                <a href="index.html" class="text-text-dark hover:text-accent-gold transition duration-150">Home</a>
+                
+                <div id="shop-trigger" class="relative group">
+                    <button class="text-text-dark flex items-center hover:text-accent-gold transition duration-150">
+                        Shop <i data-lucide="chevron-down" class="w-4 h-4 ml-1"></i>
+                    </button>
+                    <div id="desktop-shop-menu" class="desktop-shop-menu absolute left-0 mt-5 w-[700px] shadow-2xl bg-white border border-gray-100 rounded-lg p-6 pt-8">
+                        <div class="grid grid-cols-4 gap-8">
+                            <div>
+                                <h4 class="font-bold text-deep-burgundy mb-3 uppercase tracking-wider">Clothing</h4>
+                                <ul class="space-y-2 text-sm">
+                                    <li><a href="shop.html?category=Ankara" class="hover:text-accent-gold transition duration-100">Ankara (New!)</a></li>
+                                    <li><a href="shop.html?category=Abayas" class="hover:text-accent-gold transition duration-100">Abayas</a></li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-deep-burgundy mb-3 uppercase tracking-wider">Footwear</h4>
+                                <ul class="space-y-2 text-sm">
+                                    <li><a href="shop.html?category=Heels" class="hover:text-accent-gold transition duration-100">Heels</a></li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-deep-burgundy mb-3 uppercase tracking-wider">Accessories</h4>
+                                <ul class="space-y-2 text-sm">
+                                    <li><a href="shop.html?category=Jewelry" class="hover:text-accent-gold transition duration-100">Jewelry & Sets</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-span-1 bg-primary-beige p-4 rounded-lg flex flex-col justify-center items-center">
+                                <a href="shop.html" class="inline-block text-accent-gold border-b border-accent-gold hover:text-deep-burgundy transition">View Full Collection &rarr;</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <a href="#" class="text-text-dark hover:text-accent-gold transition duration-150">Contact Us</a>
+            </nav>
+
+            <div class="flex items-center space-x-4">
+                <a href="cart.html" class="flex items-center text-text-dark hover:text-accent-gold transition duration-150">
+                    <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+                    <span id="cart-count" class="ml-1 text-sm">(0)</span>
+                </a>
+
+                <button onclick="toggleSidebar('utility')" class="text-text-dark hover:text-accent-gold transition duration-150">
+                   <i data-lucide="user" class="w-6 h-6"></i>
+                </button>
+                
+                <button onclick="toggleSidebar('mobile')" class="lg:hidden text-text-dark hover:text-accent-gold transition duration-150">
+                    <i data-lucide="align-right" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+        <nav class="text-sm mb-8" aria-label="Breadcrumb">
+            <ol class="list-none p-0 inline-flex">
+                <li class="flex items-center">
+                    <a href="index.html" class="text-gray-500 hover:text-accent-gold">Home</a>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 mx-2"></i>
+                </li>
+                <li class="flex items-center">
+                    <a href="shop.html" class="text-gray-500 hover:text-accent-gold">Shop</a>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 mx-2"></i>
+                </li>
+                <li class="text-text-dark font-medium" aria-current="page" id="breadcrumb-product-name">
+                    Luxury Ankara Gown
+                </li>
+            </ol>
+        </nav>
+
+        <div class="lg:grid lg:grid-cols-2 lg:gap-x-12">
+            <div class="lg:sticky lg:top-28">
+                <div class="aspect-w-4 aspect-h-5 overflow-hidden rounded-lg mb-4 shadow-lg">
+                    <img 
+                        id="main-product-image"
+                        src="https://placehold.co/800x1000/C9A04B/333333?text=Main+Image" 
+                        alt="Luxury Ankara Gown main image" 
+                        class="w-full h-full object-cover"
+                    >
+                </div>
+
+                <div class="flex space-x-4 overflow-x-auto pb-4" id="thumbnail-gallery">
+                    <img 
+                        src="https://placehold.co/100x125/C9A04B/333333?text=View+1" 
+                        alt="Thumbnail 1" 
+                        class="thumbnail w-20 h-24 object-cover rounded-md cursor-pointer opacity-70 transition duration-200 active"
+                        data-full-src="https://placehold.co/800x1000/C9A04B/333333?text=Main+Image"
+                    >
+                    <img 
+                        src="https://placehold.co/100x125/8B0000/F9F7F4?text=View+2" 
+                        alt="Thumbnail 2" 
+                        class="thumbnail w-20 h-24 object-cover rounded-md cursor-pointer opacity-70 hover:opacity-100 transition duration-200"
+                        data-full-src="https://placehold.co/800x1000/8B0000/F9F7F4?text=Back+View"
+                    >
+                    <img 
+                        src="https://placehold.co/100x125/333333/C9A04B?text=View+3" 
+                        alt="Thumbnail 3" 
+                        class="thumbnail w-20 h-24 object-cover rounded-md cursor-pointer opacity-70 hover:opacity-100 transition duration-200"
+                        data-full-src="https://placehold.co/800x1000/333333/C9A04B?text=Detail+Shot"
+                    >
+                    </div>
+            </div>
+
+            <div class="mt-10 lg:mt-0">
+                <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider" id="product-category">Ankara / Clothing</p>
+                <h1 class="text-4xl font-extrabold text-text-dark mt-2 mb-4" id="product-name">Luxury Ankara Gown with Gold Accents</h1>
+                
+                <div class="flex items-center space-x-6 mb-6 border-b pb-4">
+                    <p class="text-3xl font-bold text-deep-burgundy" id="product-price">N75,000</p>
+                    <div class="flex items-center text-accent-gold">
+                        <i data-lucide="star" class="w-5 h-5 fill-accent-gold"></i>
+                        <i data-lucide="star" class="w-5 h-5 fill-accent-gold"></i>
+                        <i data-lucide="star" class="w-5 h-5 fill-accent-gold"></i>
+                        <i data-lucide="star-half" class="w-5 h-5 fill-accent-gold"></i>
+                        <i data-lucide="star" class="w-5 h-5 text-gray-300"></i>
+                        <span class="ml-2 text-sm text-gray-500">(24 Reviews)</span>
+                    </div>
+                </div>
+
+                <p class="text-lg text-text-dark mb-6 leading-relaxed" id="product-description-short">
+                    A show-stopping Ankara gown, crafted from premium cotton wax print with hand-stitched gold sequin detailing. Perfect for weddings, ceremonies, or high-profile events. Limited stock available.
+                </p>
+
+                <form id="add-to-cart-form">
+                    <div class="mb-6">
+                        <label for="size" class="block text-sm font-medium text-text-dark mb-2">Size <span class="text-deep-burgundy">*</span></label>
+                        <div class="flex space-x-3">
+                            <label class="p-3 border rounded-md cursor-pointer hover:border-accent-gold transition">
+                                <input type="radio" name="size" value="S" class="hidden" required> S
+                            </label>
+                            <label class="p-3 border rounded-md cursor-pointer hover:border-accent-gold transition">
+                                <input type="radio" name="size" value="M" class="hidden" required> M
+                            </label>
+                            <label class="p-3 border rounded-md cursor-pointer hover:border-accent-gold transition">
+                                <input type="radio" name="size" value="L" class="hidden" required checked> L
+                            </label>
+                            <label class="p-3 border rounded-md cursor-pointer hover:border-accent-gold transition">
+                                <input type="radio" name="size" value="XL" class="hidden" required> XL
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center border border-gray-300 rounded-md">
+                            <button type="button" onclick="changeQuantity(-1)" class="p-3 text-lg hover:bg-gray-100 rounded-l-md"><i data-lucide="minus" class="w-4 h-4"></i></button>
+                            <input type="number" id="quantity-input" name="quantity" value="1" min="1" max="10" class="w-12 text-center border-x border-gray-300 py-3 appearance-none focus:outline-none bg-white text-lg">
+                            <button type="button" onclick="changeQuantity(1)" class="p-3 text-lg hover:bg-gray-100 rounded-r-md"><i data-lucide="plus" class="w-4 h-4"></i></button>
+                        </div>
+                        
+                        <button type="submit" id="add-to-cart-btn" class="flex-1 py-4 bg-deep-burgundy text-white text-lg font-semibold rounded-md hover:bg-accent-gold transition duration-300">
+                            <i data-lucide="shopping-cart" class="w-5 h-5 mr-2 inline-block"></i> ADD TO CART
+                        </button>
+                    </div>
+                </form>
+
+                <div class="mt-10">
+                    <div class="flex border-b border-gray-200">
+                        <button class="tab-button py-2 px-4 text-lg font-medium border-b-2 border-deep-burgundy text-deep-burgundy transition duration-300" data-tab="description">Description</button>
+                        <button class="tab-button py-2 px-4 text-lg font-medium border-b-2 border-transparent text-gray-500 hover:border-gray-300 transition duration-300 ml-4" data-tab="details">Details & Care</button>
+                        <button class="tab-button py-2 px-4 text-lg font-medium border-b-2 border-transparent text-gray-500 hover:border-gray-300 transition duration-300 ml-4" data-tab="reviews">Reviews</button>
+                    </div>
+                    
+                    <div id="tab-content-description" class="tab-content py-6 text-gray-700">
+                        <p>This exquisite gown is a masterpiece of traditional Nigerian design, updated for the modern woman. Featuring a structured bodice, flowing A-line skirt, and integrated pockets. Made from 100% breathable cotton for comfort and style.</p>
+                        <ul class="list-disc pl-5 mt-4 space-y-2">
+                            <li>Material: Premium Cotton Wax Print</li>
+                            <li>Fit: True to Size (See size chart)</li>
+                            <li>Occasion: Formal Events, Parties</li>
+                        </ul>
+                    </div>
+                    <div id="tab-content-details" class="tab-content py-6 text-gray-700 hidden">
+                        <p class="font-semibold mb-2">Care Instructions:</p>
+                        <p>Dry clean recommended. If washing at home, use cold water and mild detergent. Do not bleach. Iron on low heat.</p>
+                        <p class="font-semibold mt-4 mb-2">Shipping:</p>
+                        <p>Ships within 2-3 business days. Free shipping on all orders over N100,000.</p>
+                    </div>
+                    <div id="tab-content-reviews" class="tab-content py-6 text-gray-700 hidden">
+                        <p>Customer reviews section would be dynamically loaded here from Firebase (e.g., product reviews collection).</p>
+                        <p class="mt-4">Be the first to review this product!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <section class="mt-20">
+            <h2 class="text-3xl font-bold text-text-dark mb-8 border-b pb-4">You Might Also Like</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <a href="product-detail.html?id=P901" class="block">
+                    <div class="aspect-square w-full bg-gray-200 rounded-lg"></div>
+                    <h3 class="mt-3 text-sm font-medium text-center">Matching Scarf</h3>
+                    <p class="mt-1 text-base font-semibold text-deep-burgundy text-center">N8,500</p>
+                </a>
+                <a href="product-detail.html?id=P902" class="block">
+                    <div class="aspect-square w-full bg-gray-200 rounded-lg"></div>
+                    <h3 class="mt-3 text-sm font-medium text-center">Heel Pumps</h3>
+                    <p class="mt-1 text-base font-semibold text-deep-burgundy text-center">N22,000</p>
+                </a>
+                </div>
+        </section>
+
+    </main>
+
+
+    <footer class="bg-text-dark text-primary-beige py-12 mt-12">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+            </div>
+        <div class="border-t border-gray-700 mt-8 pt-6 container mx-auto px-4 text-center text-xs text-gray-500">
+            &copy; 2024 Lara's Collection. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+        
+        // --- Shared UI Logic (Sidebar, Dropdown) ---
+        function toggleSidebar(type) {
+            let sidebar, backdrop;
+            if (type === 'utility') {
+                sidebar = document.getElementById('utility-sidebar');
+                backdrop = document.getElementById('utility-sidebar-backdrop');
+            } else if (type === 'mobile') {
+                sidebar = document.getElementById('mobile-menu');
+                backdrop = document.getElementById('mobile-menu-backdrop');
+            }
+            if (!sidebar || !backdrop) return;
+            const isOpen = sidebar.classList.contains('open');
+            if (isOpen) {
+                sidebar.classList.remove('open');
+                backdrop.classList.add('hidden');
+            } else {
+                sidebar.classList.add('open');
+                backdrop.classList.remove('hidden');
+            }
+        }
+        const shopTrigger = document.getElementById('shop-trigger');
+        const desktopMenu = document.getElementById('desktop-shop-menu');
+        if (shopTrigger) {
+            shopTrigger.addEventListener('mouseenter', () => desktopMenu.classList.add('visible'));
+            shopTrigger.addEventListener('mouseleave', () => desktopMenu.classList.remove('visible'));
+        }
+
+        // --- PDP Specific Logic ---
+
+        // 1. Quantity Control
+        function changeQuantity(delta) {
+            const input = document.getElementById('quantity-input');
+            let currentValue = parseInt(input.value);
+            let newValue = currentValue + delta;
+
+            if (newValue >= parseInt(input.min) && newValue <= parseInt(input.max)) {
+                input.value = newValue;
+            }
+        }
+
+        // 2. Tab Switching Logic
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const targetTab = e.target.getAttribute('data-tab');
+
+                // Reset all buttons and content
+                document.querySelectorAll('.tab-button').forEach(btn => {
+                    btn.classList.remove('border-deep-burgundy', 'text-deep-burgundy');
+                    btn.classList.add('border-transparent', 'text-gray-500');
+                });
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.add('hidden');
+                });
+
+                // Activate selected button and content
+                e.target.classList.add('border-deep-burgundy', 'text-deep-burgundy');
+                e.target.classList.remove('border-transparent', 'text-gray-500');
+                document.getElementById(`tab-content-${targetTab}`).classList.remove('hidden');
+            });
+        });
+
+        // 3. Image Gallery Switching
+        document.querySelectorAll('.thumbnail').forEach(thumbnail => {
+            thumbnail.addEventListener('click', (e) => {
+                const mainImage = document.getElementById('main-product-image');
+                const newSrc = e.target.getAttribute('data-full-src');
+                
+                // Set new image source
+                mainImage.src = newSrc;
+
+                // Update active state
+                document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+                e.target.classList.add('active');
+            });
+        });
+
+        // 4. Cart Management (Local Storage)
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            document.getElementById('cart-count').textContent = `(${cart.length})`;
+        }
+        
+        function getProductIdFromURL() {
+             const urlParams = new URLSearchParams(window.location.search);
+             // In a real app, this ID (e.g., P001) would be used to fetch data from Firebase
+             return urlParams.get('id') || 'DEFAULT_PRODUCT_ID';
+        }
+
+        document.getElementById('add-to-cart-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Collect form data
+            const productId = getProductIdFromURL();
+            const quantity = parseInt(document.getElementById('quantity-input').value);
+            const size = document.querySelector('input[name="size"]:checked')?.value;
+            
+            // A simple object representing the item being added
+            const newItem = {
+                id: productId,
+                name: document.getElementById('product-name').textContent,
+                price: document.getElementById('product-price').textContent, // Needs sanitization in a real app
+                quantity: quantity,
+                size: size,
+                image: document.getElementById('main-product-image').src // for cart display
+            };
+
+            // Get existing cart or initialize
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            
+            // Check if item (with same options) already exists
+            const existingItemIndex = cart.findIndex(item => 
+                item.id === newItem.id && item.size === newItem.size
+            );
+
+            if (existingItemIndex > -1) {
+                // Update quantity of existing item
+                cart[existingItemIndex].quantity += newItem.quantity;
+            } else {
+                // Add new item
+                cart.push(newItem);
+            }
+
+            // Save back to Local Storage
+            localStorage.setItem('cart', JSON.stringify(cart));
+            
+            // Update UI
+            updateCartCount();
+
+            // Provide feedback to the user
+            alert(`${newItem.quantity} x ${newItem.name} (Size: ${newItem.size}) added to cart!`);
+            
+            // Optional: Redirect to cart.html or open a mini-cart sidebar
+        });
+
+
+        // 5. Initial Load (Fetch product data)
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCartCount();
+            
+            const productId = getProductIdFromURL();
+            
+            // *** FIREBASE ACTION: Use the productId to fetch the product details from Firestore
+            // db.collection("products").doc(productId).get().then(doc => { 
+            //    if (doc.exists) { 
+            //        // Use doc.data() to populate the HTML elements (product-name, product-price, etc.)
+            //    } 
+            // });
+
+            // In a real application, you would dynamically populate:
+            // - product-name (in header and breadcrumb)
+            // - product-price
+            // - product-category
+            // - product-description-short
+            // - available sizes/colors
+            // - image URLs in main-product-image and thumbnail-gallery
+            console.log(`Product Detail Page loaded. Attempting to fetch product ID: ${productId}`);
+        });
+
+    </script>
+</body>
+</html>

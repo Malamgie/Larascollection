@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart | Lara's Collection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sacramento&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+
+    <style>
+        .brand-name {
+            font-family: 'Sacramento', cursive;
+        }
+        /* Styles copied from previous pages */
+        .desktop-shop-menu {
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .desktop-shop-menu.visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        #utility-sidebar {
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(100%);
+        }
+        #utility-sidebar.open {
+            transform: translateX(0);
+        }
+        #mobile-menu {
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(-100%);
+        }
+        #mobile-menu.open {
+            transform: translateX(0);
+        }
+        
+        /* Hide the default number input arrows */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-beige': '#F9F7F4',
+                        'accent-gold': '#C9A04B',
+                        'deep-burgundy': '#8B0000',
+                        'text-dark': '#333333',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+        
+        // --- Utility function to format Nigerian Naira ---
+        function formatNaira(amount) {
+            // Remove non-numeric characters if the price came with "N" or commas
+            const numericAmount = typeof amount === 'string' 
+                ? parseFloat(amount.replace(/[^\d.]/g, '')) 
+                : amount;
+            
+            if (isNaN(numericAmount)) return 'N0';
+            
+            return new Intl.NumberFormat('en-NG', { 
+                style: 'currency', 
+                currency: 'NGN',
+                minimumFractionDigits: 0
+            }).format(numericAmount);
+        }
+
+    </script>
+</head>
+<body class="font-sans bg-primary-beige text-text-dark antialiased">
+
+    <div id="utility-sidebar-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" onclick="toggleSidebar('utility')"></div>
+    <div id="utility-sidebar" class="fixed top-0 right-0 h-full w-64 bg-white shadow-xl z-50 p-6">
+        <div class="flex justify-end mb-8">
+            <button onclick="toggleSidebar('utility')" class="text-xl text-text-dark hover:text-deep-burgundy"><i data-lucide="x"></i></button>
+        </div>
+        <nav class="space-y-6">
+            <a href="account.html" class="block text-lg hover:text-accent-gold">My Account</a>
+        </nav>
+    </div>
+    
+    <div id="mobile-menu-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" onclick="toggleSidebar('mobile')"></div>
+    <div id="mobile-menu" class="fixed top-0 left-0 h-full w-64 bg-white shadow-xl z-50 p-6">
+        <div class="flex justify-end mb-8">
+            <button onclick="toggleSidebar('mobile')" class="text-xl text-text-dark hover:text-deep-burgundy"><i data-lucide="x"></i></button>
+        </div>
+        <nav class="space-y-4">
+            <a href="index.html" class="block text-lg font-medium hover:text-accent-gold">Home</a>
+            <div class="border-t border-gray-100 pt-4">
+                <span class="block text-lg font-medium text-text-dark mb-2">SHOP CATEGORIES</span>
+            </div>
+            <a href="#" class="block text-lg font-medium hover:text-accent-gold">Contact Us</a>
+        </nav>
+    </div>
+
+    <header class="sticky top-0 bg-white bg-opacity-95 backdrop-blur-sm shadow-sm z-30">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 h-20 flex justify-between items-center">
+            <h1 class="text-2xl font-bold tracking-widest text-text-dark"><span class="brand-name" >Lara's Collection</span></h1>
+
+            <nav class="hidden lg:flex items-center space-x-10 text-lg font-medium">
+                <a href="index.html" class="text-text-dark hover:text-accent-gold transition duration-150">Home</a>
+                <div id="shop-trigger" class="relative group">
+                    <button class="text-text-dark flex items-center hover:text-accent-gold transition duration-150">Shop <i data-lucide="chevron-down" class="w-4 h-4 ml-1"></i></button>
+                    <div id="desktop-shop-menu" class="desktop-shop-menu absolute left-0 mt-5 w-64 shadow-2xl bg-white border border-gray-100 rounded-lg p-6">
+                       </div>
+                </div>
+                <a href="#" class="text-text-dark hover:text-accent-gold transition duration-150">Contact Us</a>
+            </nav>
+
+            <div class="flex items-center space-x-4">
+                <a href="cart.html" class="flex items-center text-deep-burgundy font-bold transition duration-150">
+                    <i data-lucide="shopping-cart" class="w-6 h-6 fill-deep-burgundy"></i>
+                    <span id="cart-count" class="ml-1 text-sm">(0)</span>
+                </a>
+                <button onclick="toggleSidebar('utility')" class="text-text-dark hover:text-accent-gold transition duration-150">
+                   <i data-lucide="user" class="w-6 h-6"></i>
+                </button>
+                <button onclick="toggleSidebar('mobile')" class="lg:hidden text-text-dark hover:text-accent-gold transition duration-150">
+                    <i data-lucide="align-right" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h2 class="text-4xl font-extrabold text-text-dark mb-8 border-b pb-4">Your Shopping Cart</h2>
+
+        <div class="lg:grid lg:grid-cols-3 lg:gap-10">
+            <div class="lg:col-span-2">
+                
+                <div id="cart-items-container" class="space-y-6">
+                    <div class="flex items-center bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-100" data-item-key="P001-L">
+                        <img src="https://placehold.co/100x125/C9A04B/333333?text=Product+Image" alt="Ankara Gown" class="w-24 h-30 object-cover rounded-md mr-6">
+                        
+                        <div class="flex-grow">
+                            <a href="product-detail.html?id=P001" class="text-lg font-semibold hover:text-accent-gold transition duration-150">Luxury Ankara Gown</a>
+                            <p class="text-sm text-gray-500">Size: L</p>
+                            <p class="text-md font-medium text-text-dark mt-1" data-price="75000">N75,000</p>
+                        </div>
+                        
+                        <div class="flex items-center mx-6">
+                            <button onclick="updateItemQuantity('P001-L', -1)" class="p-2 text-sm hover:bg-gray-100 rounded-l-md border border-r-0"><i data-lucide="minus" class="w-4 h-4"></i></button>
+                            <input type="number" value="1" min="1" onchange="manualQuantityChange('P001-L', this.value)" class="w-12 text-center border-y py-2 appearance-none focus:outline-none bg-white font-medium text-sm" data-item-id="P001-L-qty-input">
+                            <button onclick="updateItemQuantity('P001-L', 1)" class="p-2 text-sm hover:bg-gray-100 rounded-r-md border border-l-0"><i data-lucide="plus" class="w-4 h-4"></i></button>
+                        </div>
+                        
+                        <div class="flex flex-col items-end min-w-[100px]">
+                            <p class="text-xl font-bold text-deep-burgundy" data-subtotal="75000" id="subtotal-P001-L">N75,000</p>
+                            <button onclick="removeItem('P001-L')" class="text-red-500 hover:text-red-700 text-sm mt-2 flex items-center">
+                                <i data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                    <div id="empty-cart-message" class="hidden text-center py-20 bg-white rounded-lg shadow-sm">
+                        <i data-lucide="shopping-bag" class="w-16 h-16 mx-auto text-gray-400 mb-4"></i>
+                        <p class="text-xl font-semibold text-gray-600 mb-4">Your cart is currently empty.</p>
+                        <a href="shop.html" class="text-accent-gold hover:text-deep-burgundy font-medium text-lg border-b border-accent-gold">Continue Shopping</a>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-between">
+                    <a href="shop.html" class="flex items-center text-text-dark hover:text-deep-burgundy transition">
+                        <i data-lucide="chevron-left" class="w-5 h-5 mr-1"></i> Continue Shopping
+                    </a>
+                </div>
+            </div>
+
+            <div class="lg:col-span-1 mt-10 lg:mt-0">
+                <div class="bg-white p-6 rounded-lg shadow-xl sticky top-28">
+                    <h3 class="text-2xl font-bold text-text-dark mb-6 border-b pb-3">Order Summary</h3>
+
+                    <div class="space-y-3 text-lg">
+                        <div class="flex justify-between">
+                            <span>Subtotal:</span>
+                            <span id="summary-subtotal" class="font-medium">N0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Shipping (Flat Rate):</span>
+                            <span class="font-medium text-green-600">Free</span>
+                        </div>
+                        <div class="flex justify-between text-red-500">
+                            <span>Discount:</span>
+                            <span id="summary-discount" class="font-medium">-N0</span>
+                        </div>
+                        <div class="flex justify-between border-t pt-4 text-xl font-bold text-deep-burgundy">
+                            <span>Order Total:</span>
+                            <span id="summary-total">N0</span>
+                        </div>
+                    </div>
+                    
+                    <a href="checkout.html" id="checkout-link" class="block w-full text-center py-3 mt-8 bg-accent-gold text-white text-lg font-semibold rounded-md hover:bg-deep-burgundy transition duration-300">
+                        PROCEED TO CHECKOUT
+                    </a>
+                    
+                    <p class="text-xs text-gray-500 mt-3 text-center">Taxes and duties may apply during checkout.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+    <footer class="bg-text-dark text-primary-beige py-12 mt-12">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+            </div>
+        <div class="border-t border-gray-700 mt-8 pt-6 container mx-auto px-4 text-center text-xs text-gray-500">
+            &copy; 2024 Lara's Collection. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+        
+        // --- Shared UI Logic (Sidebar, Dropdown) ---
+        function toggleSidebar(type) {
+            let sidebar, backdrop;
+            if (type === 'utility') {
+                sidebar = document.getElementById('utility-sidebar');
+                backdrop = document.getElementById('utility-sidebar-backdrop');
+            } else if (type === 'mobile') {
+                sidebar = document.getElementById('mobile-menu');
+                backdrop = document.getElementById('mobile-menu-backdrop');
+            }
+            if (!sidebar || !backdrop) return;
+            const isOpen = sidebar.classList.contains('open');
+            if (isOpen) {
+                sidebar.classList.remove('open');
+                backdrop.classList.add('hidden');
+            } else {
+                sidebar.classList.add('open');
+                backdrop.classList.remove('hidden');
+            }
+        }
+        const shopTrigger = document.getElementById('shop-trigger');
+        const desktopMenu = document.getElementById('desktop-shop-menu');
+        if (shopTrigger) {
+            shopTrigger.addEventListener('mouseenter', () => desktopMenu.classList.add('visible'));
+            shopTrigger.addEventListener('mouseleave', () => desktopMenu.classList.remove('visible'));
+        }
+
+        // --- CART SPECIFIC LOGIC ---
+        
+        // Saves cart array back to Local Storage
+        function saveCart(cart) {
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount(cart.length);
+        }
+
+        // Retrieves cart array from Local Storage
+        function getCart() {
+            return JSON.parse(localStorage.getItem('cart') || '[]');
+        }
+
+        // Updates the count displayed in the header
+        function updateCartCount(count) {
+            document.getElementById('cart-count').textContent = `(${count})`;
+        }
+
+        // Renders the list of items and the summary
+        function renderCart() {
+            const cart = getCart();
+            const container = document.getElementById('cart-items-container');
+            container.innerHTML = ''; // Clear existing content
+
+            if (cart.length === 0) {
+                document.getElementById('empty-cart-message').classList.remove('hidden');
+                document.getElementById('checkout-link').classList.add('opacity-50', 'pointer-events-none');
+                updateSummary(0);
+                return;
+            } else {
+                document.getElementById('empty-cart-message').classList.add('hidden');
+                document.getElementById('checkout-link').classList.remove('opacity-50', 'pointer-events-none');
+            }
+
+            let cartSubtotal = 0;
+
+            cart.forEach(item => {
+                // Create a unique key for the item (ID + Options)
+                const itemKey = `${item.id}-${item.size || ''}`;
+                // Get the numeric price (assuming price is stored like 'N75,000' or 75000)
+                const priceValue = parseFloat(item.price.replace(/[^\d.]/g, ''));
+                const itemSubtotal = priceValue * item.quantity;
+                cartSubtotal += itemSubtotal;
+                
+                // Build the HTML for the cart item
+                const itemHtml = `
+                    <div class="flex items-center bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-100" data-item-key="${itemKey}">
+                        <img src="${item.image || 'https://placehold.co/100x125/D2B48C/333333?text=Product'}" alt="${item.name}" class="w-24 h-30 object-cover rounded-md mr-6">
+                        
+                        <div class="flex-grow">
+                            <a href="product-detail.html?id=${item.id}" class="text-lg font-semibold hover:text-accent-gold transition duration-150">${item.name}</a>
+                            ${item.size ? `<p class="text-sm text-gray-500">Size: ${item.size}</p>` : ''}
+                            <p class="text-md font-medium text-text-dark mt-1" data-price="${priceValue}">${formatNaira(priceValue)}</p>
+                        </div>
+                        
+                        <div class="flex items-center mx-6">
+                            <button onclick="updateItemQuantity('${itemKey}', -1)" class="p-2 text-sm hover:bg-gray-100 rounded-l-md border border-r-0"><i data-lucide="minus" class="w-4 h-4"></i></button>
+                            <input type="number" value="${item.quantity}" min="1" onchange="manualQuantityChange('${itemKey}', this.value)" class="w-12 text-center border-y py-2 appearance-none focus:outline-none bg-white font-medium text-sm" data-item-id="${itemKey}-qty-input">
+                            <button onclick="updateItemQuantity('${itemKey}', 1)" class="p-2 text-sm hover:bg-gray-100 rounded-r-md border border-l-0"><i data-lucide="plus" class="w-4 h-4"></i></button>
+                        </div>
+                        
+                        <div class="flex flex-col items-end min-w-[100px]">
+                            <p class="text-xl font-bold text-deep-burgundy" data-subtotal="${itemSubtotal}" id="subtotal-${itemKey}">${formatNaira(itemSubtotal)}</p>
+                            <button onclick="removeItem('${itemKey}')" class="text-red-500 hover:text-red-700 text-sm mt-2 flex items-center">
+                                <i data-lucide="trash-2" class="w-4 h-4 mr-1"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', itemHtml);
+            });
+            
+            lucide.createIcons(); // Re-initialize icons for the new elements
+            updateSummary(cartSubtotal);
+        }
+
+        // Recalculates and updates the Order Summary panel
+        function updateSummary(subtotal) {
+            // Assume free shipping for simplicity; in a real app, this would be conditional
+            const shipping = 0; 
+            const discount = 0; // Implement coupon logic here if needed
+            const total = subtotal + shipping - discount;
+
+            document.getElementById('summary-subtotal').textContent = formatNaira(subtotal);
+            document.getElementById('summary-discount').textContent = `-${formatNaira(discount)}`;
+            document.getElementById('summary-total').textContent = formatNaira(total);
+        }
+
+        // Handles click on plus/minus buttons
+        function updateItemQuantity(itemKey, delta) {
+            let cart = getCart();
+            
+            // Find the item using the itemKey
+            const index = cart.findIndex(item => `${item.id}-${item.size || ''}` === itemKey);
+            
+            if (index > -1) {
+                let newQuantity = cart[index].quantity + delta;
+                
+                if (newQuantity < 1) {
+                    // If quantity drops below 1, remove the item
+                    removeItem(itemKey);
+                    return;
+                }
+                
+                // Update quantity and save
+                cart[index].quantity = newQuantity;
+                saveCart(cart);
+                
+                // Re-render the whole cart for simplicity
+                renderCart(); 
+                
+                // For performance, you could update only the quantity input and subtotal element
+            }
+        }
+        
+        // Handles manual input change
+        function manualQuantityChange(itemKey, newQtyString) {
+            let newQuantity = parseInt(newQtyString);
+            if (isNaN(newQuantity) || newQuantity < 1) {
+                // Reset to 1 or last valid quantity
+                newQuantity = 1; 
+                document.querySelector(`input[data-item-id="${itemKey}-qty-input"]`).value = 1;
+            }
+            
+            let cart = getCart();
+            const index = cart.findIndex(item => `${item.id}-${item.size || ''}` === itemKey);
+
+            if (index > -1) {
+                cart[index].quantity = newQuantity;
+                saveCart(cart);
+                renderCart();
+            }
+        }
+
+
+        // Removes an item from the cart
+        function removeItem(itemKey) {
+            let cart = getCart();
+            
+            // Filter out the item to be removed
+            const updatedCart = cart.filter(item => `${item.id}-${item.size || ''}` !== itemKey);
+            
+            // Save the new cart and re-render
+            saveCart(updatedCart);
+            renderCart();
+        }
+
+        // Initializer
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCart();
+        });
+    </script>
+</body>
+</html>
