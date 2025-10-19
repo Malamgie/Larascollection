@@ -14,6 +14,11 @@
     <script>
         // Placeholder for Firebase initialization
         // const db = firebase.firestore();
+        <script>
+  window.addEventListener("beforeunload", () => {
+    document.body.classList.add("opacity-0", "transition-opacity", "duration-500");
+  });
+</script>
     </script>
 
     <style>
@@ -237,12 +242,12 @@
             <div class="group bg-white rounded-lg shadow-md hover:shadow-xl transition duration-300">
                 <a href="product-detail.html?id=NA006">
                     <div class="aspect-w-3 aspect-h-4 overflow-hidden rounded-t-lg">
-                        <img src="https://placehold.co/400x533/F5F5DC/8B0000?text=Beige+Sandal" alt="Embroidered Beige Sandal" class="w-full h-full object-cover transition duration-300 group-hover:opacity-85">
+                        <img src="bag3.webp" alt="Embroidered Beige Sandal" class="w-full h-full object-cover transition duration-300 group-hover:opacity-85">
                         <span class="absolute top-3 left-3 bg-deep-burgundy text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">NEW</span>
                     </div>
                     <div class="p-4 text-center">
-                        <p class="text-xs text-gray-500 uppercase tracking-wider">Footwear / Sandals</p>
-                        <h3 class="mt-1 text-base font-medium text-text-dark truncate">Embroidered Comfort Slides</h3>
+                        <p class="text-xs text-gray-500 uppercase tracking-wider">Bag & Heels</p>
+                        <h3 class="mt-1 text-base font-medium text-text-dark truncate">Elegant Comfort Slides</h3>
                         <p class="mt-1 text-lg font-bold text-deep-burgundy">N12,500</p>
                     </div>
                 </a>
@@ -349,4 +354,5 @@
     </script>
 </body>
 </html>
+
 
